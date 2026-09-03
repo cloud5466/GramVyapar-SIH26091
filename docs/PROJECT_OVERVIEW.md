@@ -2,14 +2,14 @@
 
 ## Identity
 
-- **Product:** Dhandha Dost
-- **Tagline:** Har Business Ka Smart Dost
+- **Product:** GramVyapar
+- **Tagline:** Har Vyapar Ka Smart Saathi
 - **Event:** Smart India Hackathon 2026
 - **Problem Statement ID:** SIH26091
 
 ## Product purpose
 
-Dhandha Dost helps rural and semi-urban first-time entrepreneurs move from:
+GramVyapar helps rural and semi-urban first-time entrepreneurs move from:
 
     Location
     +
@@ -35,7 +35,7 @@ capital they can contribute, while local demand evidence, competition context,
 business planning and official finance rules remain fragmented. Generic AI
 advice can sound confident without local evidence or auditable calculations.
 
-Dhandha Dost brings those layers into one explainable workflow.
+GramVyapar brings those layers into one explainable workflow.
 
 ## Product principles
 

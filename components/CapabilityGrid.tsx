@@ -12,7 +12,7 @@ export function CapabilityGrid() {
   return (
     <section id="what-you-get" className="section-shell bg-[#EFF7FF]">
       <div className="section-container">
-        <SectionHeader eyebrow="Aapko kya milega" title="Dhandha Dost Aapko Kya Batayega?" align="center" />
+        <SectionHeader eyebrow="Aapko kya milega" title="GramVyapar Aapko Kya Batayega?" align="center" />
         <div className="mt-11 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {benefits.map(({ icon: Icon, label, title, copy, accent }) => (
             <article key={label} className={`rounded-[20px] border p-6 shadow-[0_12px_30px_rgba(18,59,112,.06)] ${accent ? 'border-[#BCD8FA] bg-[#006EFF] text-white' : 'border-[#DCEBFA] bg-white'}`}>

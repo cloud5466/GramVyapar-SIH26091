@@ -1,8 +1,8 @@
-# Dhandha Dost
+# GramVyapar
 
 **Smart India Hackathon 2026 · Problem Statement SIH26091**
 
-Dhandha Dost is an AI-driven, hyper-local business advisory and financial
+GramVyapar is an AI-driven, hyper-local business advisory and financial
 structuring assistant for rural and semi-urban first-time entrepreneurs. It
 helps a user move from three simple inputs—location, business idea and
 available capital—to an evidence-backed view of local business potential,
@@ -56,7 +56,7 @@ use `team/HANDOFF_TEMPLATE.md`.
 
 ## Current status
 
-- The Dhandha Dost Next.js landing website is working.
+- The GramVyapar Next.js landing website is working.
 - The public prototype experience is illustrative and frontend-only.
 - Phase 1 repository architecture and team workspaces are initialized.
 - Data CSVs and financial rule CSVs contain headers only.

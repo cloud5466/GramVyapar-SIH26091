@@ -6,7 +6,7 @@ Record only requirements supported by the official SIH statement or an
 authorized clarification. Link every row to the relevant entry in
 `research/sources.md`.
 
-| SIH Requirement | Interpretation | Dhandha Dost Response | MVP Status |
+| SIH Requirement | Interpretation | GramVyapar Response | MVP Status |
 | --- | --- | --- | --- |
 |  |  |  | NOT STARTED |
 

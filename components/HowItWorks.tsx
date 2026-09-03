@@ -29,7 +29,7 @@ export function HowItWorks() {
 
         <div className="mx-auto mt-8 flex max-w-2xl flex-col items-center rounded-[22px] bg-[#006EFF] px-6 py-7 text-center text-white shadow-[0_16px_36px_rgba(0,110,255,.2)] sm:flex-row sm:justify-center sm:gap-6 sm:text-left">
           <div className="grid size-14 place-items-center rounded-2xl bg-white/15"><Handshake className="size-7" /></div>
-          <div className="mt-4 sm:mt-0"><p className="text-sm font-bold text-white/75">Dhandha Dost</p><p className="mt-1 text-2xl font-bold tracking-[-0.03em]">Aapka Simple Business Plan</p></div>
+          <div className="mt-4 sm:mt-0"><p className="text-sm font-bold text-white/75">GramVyapar</p><p className="mt-1 text-2xl font-bold tracking-[-0.03em]">Aapka Simple Business Plan</p></div>
         </div>
       </div>
     </section>

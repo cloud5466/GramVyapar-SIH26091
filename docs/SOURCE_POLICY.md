@@ -1,6 +1,6 @@
 # Source and evidence policy
 
-This policy determines how Dhandha Dost labels information and prevents
+This policy determines how GramVyapar labels information and prevents
 prototype values from being mistaken for real-world findings.
 
 ## VERIFIED

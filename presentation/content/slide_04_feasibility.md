@@ -6,7 +6,7 @@ Explain why the MVP is feasible and how it differs from generic AI advice.
 
 ## MAIN MESSAGE
 
-Dhandha Dost combines a deliberately small MVP boundary with auditable rules,
+GramVyapar combines a deliberately small MVP boundary with auditable rules,
 local evidence and explainable scores.
 
 ## VISUAL

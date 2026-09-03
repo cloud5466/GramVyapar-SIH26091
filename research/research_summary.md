@@ -11,7 +11,7 @@ without permission.
 - **Year:**
 - **Link / DOI:**
 - **Main Finding:**
-- **Why It Matters to Dhandha Dost:**
+- **Why It Matters to GramVyapar:**
 - **Possible PPT Line:**
 
 ### Evidence notes

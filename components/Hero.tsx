@@ -19,14 +19,14 @@ export function Hero() {
 
           <h1 className="animate-fade-up delay-1 mt-7 text-[clamp(2.75rem,5.8vw,5.35rem)] leading-[1.02] font-bold tracking-[-0.055em] text-[#172033]">
             Apna Business<br />Shuru Karna Hai?
-            <span className="mt-2 block text-[#006EFF]">Dhandha Dost Se Pehle Plan Karo.</span>
+            <span className="mt-2 block text-[#006EFF]">GramVyapar Se Pehle Plan Karo.</span>
           </h1>
 
           <p className="animate-fade-up delay-2 mt-7 max-w-[620px] text-lg leading-8 text-[#39445A] sm:text-xl">
             Bas humein batao aap kahan rehte ho, kaunsa business shuru karna hai, aur kitna paisa invest kar sakte ho.
           </p>
           <p className="animate-fade-up delay-2 mt-3 max-w-[610px] text-base leading-7 text-[#5B6475]">
-            Dhandha Dost helps you understand local opportunity, business risk and a possible financial plan.
+            GramVyapar helps you understand local opportunity, business risk and a possible financial plan.
           </p>
 
           <div className="animate-fade-up delay-3 mt-9 flex flex-col gap-3 sm:flex-row">

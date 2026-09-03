@@ -1,4 +1,4 @@
-# Slide 2 — Problem + Dhandha Dost Solution
+# Slide 2 — Problem + GramVyapar Solution
 
 ## PURPOSE
 
@@ -12,7 +12,7 @@ financial structure and next-step plan.
 
 ## VISUAL
 
-Location + Business Idea + Available Capital → Dhandha Dost → Business
+Location + Business Idea + Available Capital → GramVyapar → Business
 Potential + Financial Structure + Next Steps.
 
 ## CONTENT

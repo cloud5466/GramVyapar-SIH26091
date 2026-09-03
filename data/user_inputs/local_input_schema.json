@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "Dhandha Dost Local Input",
+  "title": "GramVyapar Local Input",
   "description": "Canonical entrepreneur input accepted by the future prototype.",
   "type": "object",
   "additionalProperties": false,

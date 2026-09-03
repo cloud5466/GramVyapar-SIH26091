@@ -5,7 +5,7 @@ instead of inventing an answer.
 
 ## Problem Understanding
 
-- Which entrepreneur decision does Dhandha Dost improve first?
+- Which entrepreneur decision does GramVyapar improve first?
 - Why is hyper-local evidence necessary for this problem?
 - What is explicitly outside the MVP?
 

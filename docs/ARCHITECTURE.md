@@ -18,7 +18,7 @@
     AI explanation constrained by calculated and sourced evidence
                          ↓
     PRESENTATION LAYER
-    Simple Dhandha Dost result + Detailed Analysis for advanced users/judges
+    Simple GramVyapar result + Detailed Analysis for advanced users/judges
 
 > Data provides the evidence.  
 > Code performs critical calculations.  

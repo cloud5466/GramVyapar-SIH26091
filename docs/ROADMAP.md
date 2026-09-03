@@ -44,7 +44,7 @@ responses pass review.
 
 ## PHASE 7 — Frontend Integration
 
-Connect the working Dhandha Dost interface to the versioned prototype result.
+Connect the working GramVyapar interface to the versioned prototype result.
 
 **Exit:** UI handles loading, success, unsupported and failure states without
 mixing real and illustrative data.

@@ -71,7 +71,7 @@ export function PrototypePreview() {
   return (
     <section id="prototype" className="section-shell bg-white">
       <div className="section-container">
-        <SectionHeader eyebrow="Try the prototype" title="Try Dhandha Dost" description="Teen simple answers dein. Ek easy business plan dekhein." align="center" />
+        <SectionHeader eyebrow="Try the prototype" title="Try GramVyapar" description="Teen simple answers dein. Ek easy business plan dekhein." align="center" />
 
         <div className="mx-auto mt-12 max-w-6xl overflow-hidden rounded-[24px] border border-[#CFE3F7] bg-white shadow-[0_24px_70px_rgba(18,59,112,.1)]">
           <div className="grid lg:grid-cols-[.82fr_1.18fr]">

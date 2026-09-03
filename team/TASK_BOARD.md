@@ -1,4 +1,4 @@
-# Dhandha Dost task board
+# GramVyapar task board
 
 Use only these statuses: `NOT STARTED`, `IN PROGRESS`, `DONE`, `BLOCKED`.
 Owners should link the accepted deliverable and handoff in the task cell or a

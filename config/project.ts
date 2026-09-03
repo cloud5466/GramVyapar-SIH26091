@@ -1,7 +1,7 @@
-export const productName = 'Dhandha Dost';
+export const productName = 'GramVyapar';
 export const problemStatementId = 'SIH26091';
 export const eventName = 'Smart India Hackathon 2026';
-export const tagline = 'Har Business Ka Smart Dost';
+export const tagline = 'Har Vyapar Ka Smart Saathi';
 export const teamName = 'Team name';
 
 export const PROJECT_CONFIG = {

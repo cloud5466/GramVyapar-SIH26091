@@ -6,7 +6,7 @@ supersede them explicitly.
 
 ## Initial decisions
 
-1. **Dhandha Dost is the product name.**
+1. **GramVyapar is the product name.**
 2. **Target users are rural and semi-urban first-time entrepreneurs.**
 3. **The public UI remains extremely simple.**
 4. **Technical details use progressive disclosure.**
