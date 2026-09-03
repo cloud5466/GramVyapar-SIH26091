@@ -1,10 +1,12 @@
+import { PROJECT_CONFIG } from '@/config/project';
+
 export const SITE_CONFIG = {
-  productName: 'Dhandha Dost',
-  brandDisplay: 'Dhandha Dost',
-  tagline: 'Har Business Ka Smart Dost',
-  eventName: 'Smart India Hackathon 2026',
-  problemId: 'SIH26091',
-  teamName: 'Team name',
+  productName: PROJECT_CONFIG.productName,
+  brandDisplay: PROJECT_CONFIG.productName,
+  tagline: PROJECT_CONFIG.tagline,
+  eventName: PROJECT_CONFIG.eventName,
+  problemId: PROJECT_CONFIG.problemStatementId,
+  teamName: PROJECT_CONFIG.teamName,
 } as const;
 
 export const NAV_ITEMS = [

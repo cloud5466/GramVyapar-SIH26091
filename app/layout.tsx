@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
+import { PROJECT_CONFIG } from '@/config/project';
 import './globals.css';
 
 const geistSans = Geist({
@@ -13,9 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'Dhandha Dost — Har Business Ka Smart Dost',
-  description:
-    'Simple business planning support for first-time rural and semi-urban entrepreneurs, created for Smart India Hackathon 2026.',
+  title: `${PROJECT_CONFIG.productName} — ${PROJECT_CONFIG.tagline}`,
+  description: `Simple business planning support for first-time rural and semi-urban entrepreneurs, created for ${PROJECT_CONFIG.eventName}.`,
 };
 
 export default function RootLayout({

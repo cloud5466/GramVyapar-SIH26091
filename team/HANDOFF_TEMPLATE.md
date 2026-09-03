@@ -1,0 +1,47 @@
+# Team handoff
+
+**TASK:**
+
+**OWNER:**
+
+**DATE:**
+
+## FILES PROVIDED:
+
+- 
+
+## SOURCE:
+
+- 
+
+## WHAT WAS DONE:
+
+- 
+
+## IMPORTANT ASSUMPTIONS:
+
+- 
+
+## VERIFIED FACTS:
+
+- 
+
+## ESTIMATED / PROXY VALUES:
+
+- 
+
+## ILLUSTRATIVE VALUES:
+
+- 
+
+## KNOWN LIMITATIONS:
+
+- 
+
+## WHAT THE PROTOTYPE NEEDS FROM THIS:
+
+- 
+
+## OPEN QUESTIONS:
+
+- 
