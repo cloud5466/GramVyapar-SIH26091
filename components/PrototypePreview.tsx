@@ -1,93 +1,133 @@
 'use client';
 
 import { useState } from 'react';
-import { ArrowRight, BadgeIndianRupee, BarChart3, Check, LoaderCircle, MapPin, ShieldAlert, Sparkles } from 'lucide-react';
+import {
+  ArrowRight,
+  BadgeIndianRupee,
+  ChevronDown,
+  Milk,
+  LoaderCircle,
+  MapPin,
+  MessageCircleMore,
+  Plus,
+  Scissors,
+  ShoppingCart,
+  Store,
+  UsersRound,
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Input } from '@/components/ui/input';
 import { Progress, ProgressIndicator, ProgressTrack } from '@/components/ui/progress';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { SectionHeader } from './SectionHeader';
 
-const scores = [
-  ['Demand', 24, 30],
-  ['Competition', 17, 25],
-  ['Financial Feasibility', 21, 25],
-  ['Operational Readiness', 14, 20],
+const businesses = [
+  { id: 'Dairy', label: 'Dairy', icon: Milk },
+  { id: 'Tailoring Shop', label: 'Tailoring', icon: Scissors },
+  { id: 'Kirana Store', label: 'Kirana', icon: ShoppingCart },
+  { id: 'Other Business', label: 'Other', icon: Plus },
 ] as const;
 
-function ResultScore({ label, value, max }: { label: string; value: number; max: number }) {
+const insights = [
+  { icon: UsersRound, title: 'Customers', copy: 'Local demand appears promising.' },
+  { icon: Store, title: 'Competition', copy: 'Some competition exists nearby.' },
+  { icon: BadgeIndianRupee, title: 'Money', copy: 'Your available investment can support further planning.' },
+] as const;
+
+const scores = [
+  ['Demand score', 24, 30],
+  ['Competition score', 17, 25],
+  ['Financial feasibility', 21, 25],
+  ['Operational risk', 14, 20],
+] as const;
+
+function ScoreRow({ label, value, max }: { label: string; value: number; max: number }) {
   return (
     <div>
-      <div className="mb-2 flex items-center justify-between text-sm"><span className="text-[#94A3B8]">{label}</span><span className="font-semibold text-[#F8FAFC]">{value} <span className="font-normal text-[#475569]">/ {max}</span></span></div>
-      <Progress value={(value / max) * 100} className="gap-0"><ProgressTrack className="h-1.5 bg-white/[0.065]"><ProgressIndicator className="bg-gradient-to-r from-[#008CFF] to-[#22D3EE]" /></ProgressTrack></Progress>
+      <div className="mb-2 flex justify-between gap-4 text-sm"><span className="font-semibold text-[#445168]">{label}</span><span className="font-bold text-[#123B70]">{value} / {max}</span></div>
+      <Progress value={(value / max) * 100} className="gap-0"><ProgressTrack className="h-2 bg-[#E5EEF7]"><ProgressIndicator className="bg-[#006EFF]" /></ProgressTrack></Progress>
     </div>
   );
 }
 
 export function PrototypePreview() {
+  const [business, setBusiness] = useState('Tailoring Shop');
+  const [capital, setCapital] = useState('1,00,000');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [showResult, setShowResult] = useState(true);
+  const [showResult, setShowResult] = useState(false);
+  const [detailsOpen, setDetailsOpen] = useState(false);
 
   function analyze() {
     setIsAnalyzing(true);
     setShowResult(false);
+    setDetailsOpen(false);
     window.setTimeout(() => {
       setIsAnalyzing(false);
       setShowResult(true);
-    }, 850);
+    }, 700);
   }
 
   return (
-    <section id="prototype" className="section-shell relative overflow-hidden">
-      <div className="absolute right-[5%] top-[20%] -z-10 h-96 w-96 rounded-full bg-[#008CFF]/[0.055] blur-[100px]" />
+    <section id="prototype" className="section-shell bg-white">
       <div className="section-container">
-        <SectionHeader eyebrow="Sample advisory experience" title="From Three Inputs to a Clearer Next Move." description="A simulated view of the future application experience. All values below are illustrative and do not represent live local findings." />
+        <SectionHeader eyebrow="Try the prototype" title="Try Dhandha Dost" description="Teen simple answers dein. Ek easy business plan dekhein." align="center" />
 
-        <div className="mt-12 overflow-hidden rounded-[24px] border border-[#008CFF]/25 bg-[#07111F] shadow-[0_32px_100px_rgba(0,0,0,.32),0_0_70px_rgba(0,140,255,.04)]">
-          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#008CFF]/15 px-5 py-4 sm:px-7">
-            <div className="flex items-center gap-3"><div className="grid size-9 place-items-center rounded-xl bg-[#008CFF]/10"><Sparkles className="size-[18px] text-[#00B7FF]" /></div><div><p className="text-sm font-semibold text-white">Advisory Workspace</p><p className="text-xs text-[#64748B]">Business pre-assessment</p></div></div>
-            <span className="rounded-full border border-[#22D3EE]/20 bg-[#22D3EE]/[0.06] px-3 py-1.5 text-[10px] font-bold tracking-[0.12em] text-[#67E8F9] uppercase">Illustrative Prototype Analysis</span>
-          </div>
+        <div className="mx-auto mt-12 max-w-6xl overflow-hidden rounded-[24px] border border-[#CFE3F7] bg-white shadow-[0_24px_70px_rgba(18,59,112,.1)]">
+          <div className="grid lg:grid-cols-[.82fr_1.18fr]">
+            <div className="border-b border-[#DCEBFA] bg-[#F8FBFF] p-5 sm:p-8 lg:border-r lg:border-b-0">
+              <div className="flex items-center gap-3"><div className="grid size-11 place-items-center rounded-2xl bg-[#006EFF] text-white"><MessageCircleMore className="size-5" /></div><div><p className="text-lg font-bold text-[#172033]">Tell us about your plan</p><p className="text-sm text-[#5B6475]">It takes less than a minute.</p></div></div>
 
-          <div className="grid lg:grid-cols-[0.72fr_1.28fr]">
-            <div className="border-b border-[#008CFF]/12 p-5 sm:p-7 lg:border-r lg:border-b-0">
-              <p className="text-xs font-bold tracking-[0.14em] text-[#64748B] uppercase">Entrepreneur inputs</p>
-              <div className="mt-7 space-y-5">
-                <label htmlFor="location" className="block"><span className="field-label"><MapPin className="size-3.5" />Location</span><Select defaultValue="sample-block"><SelectTrigger id="location" className="mt-2 h-12 w-full rounded-xl border-white/[0.08] bg-[#0B1728] px-4 text-[15px] hover:bg-[#0D1C31]"><SelectValue /></SelectTrigger><SelectContent className="border border-[#008CFF]/20"><SelectItem value="sample-block">Sample Rural Block</SelectItem><SelectItem value="pilot-block">Pilot Rural Block</SelectItem></SelectContent></Select></label>
-                <label htmlFor="business" className="block"><span className="field-label"><BarChart3 className="size-3.5" />Business</span><Input id="business" defaultValue="Dairy Enterprise" className="mt-2 h-12 rounded-xl border-white/[0.08] bg-[#0B1728] px-4 text-[15px]" /></label>
-                <label htmlFor="capital" className="block"><span className="field-label"><BadgeIndianRupee className="size-3.5" />Available Capital</span><Input id="capital" defaultValue="₹1,00,000" className="mt-2 h-12 rounded-xl border-white/[0.08] bg-[#0B1728] px-4 text-[15px]" /></label>
+              <div className="mt-8 space-y-8">
+                <div>
+                  <label htmlFor="plan-location" className="flex items-center gap-3 text-base font-bold text-[#172033]"><span className="step-number">1</span>Where do you live?</label>
+                  <Select defaultValue="margao"><SelectTrigger id="plan-location" className="mt-3 h-14 w-full rounded-2xl border-[#C9DDF1] bg-white px-4 text-base font-semibold text-[#26344A]"><SelectValue /></SelectTrigger><SelectContent className="border-[#CFE3F7] bg-white"><SelectItem value="margao">Margao, Goa</SelectItem><SelectItem value="sample-rural">Sample Rural Block</SelectItem><SelectItem value="pilot">Pilot Location</SelectItem></SelectContent></Select>
+                </div>
+
+                <fieldset>
+                  <legend className="flex items-center gap-3 text-base font-bold text-[#172033]"><span className="step-number">2</span>What business do you want to start?</legend>
+                  <div className="mt-3 grid grid-cols-2 gap-3">
+                    {businesses.map(({ id, label, icon: Icon }) => {
+                      const selected = business === id;
+                      return <button key={id} type="button" aria-pressed={selected} onClick={() => setBusiness(id)} className={`flex min-h-24 flex-col items-center justify-center rounded-2xl border p-3 text-sm font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#006EFF] focus-visible:ring-offset-2 ${selected ? 'border-[#006EFF] bg-[#EAF4FF] text-[#006EFF] shadow-[inset_0_0_0_1px_#006EFF]' : 'border-[#D7E6F4] bg-white text-[#445168] hover:border-[#8FBEF3]'}`}><Icon className="mb-2 size-7" strokeWidth={1.9} />{label}{selected && <span className="sr-only"> selected</span>}</button>;
+                    })}
+                  </div>
+                </fieldset>
+
+                <div>
+                  <label htmlFor="plan-capital" className="flex items-center gap-3 text-base font-bold text-[#172033]"><span className="step-number">3</span>How much can you invest?</label>
+                  <div className="mt-3 flex h-14 items-center rounded-2xl border border-[#C9DDF1] bg-white px-4 focus-within:border-[#006EFF] focus-within:ring-2 focus-within:ring-[#006EFF]/20"><span className="text-xl font-bold text-[#006EFF]">₹</span><Input id="plan-capital" inputMode="numeric" value={capital} onChange={(event) => setCapital(event.target.value)} className="h-full border-0 bg-transparent px-3 text-lg font-bold text-[#172033] shadow-none focus-visible:ring-0" /></div>
+                </div>
               </div>
-              <Button onClick={analyze} disabled={isAnalyzing} className="mt-7 h-12 w-full rounded-xl bg-[#008CFF] text-sm font-semibold shadow-[0_12px_36px_rgba(0,140,255,.18)] hover:bg-[#0A9BFF]">
-                {isAnalyzing ? <><LoaderCircle className="size-4 animate-spin" />Analyzing evidence</> : <>Analyse Business<ArrowRight className="size-4" /></>}
+
+              <Button onClick={analyze} disabled={isAnalyzing} className="mt-8 h-14 w-full rounded-2xl bg-[#006EFF] text-base font-extrabold text-white shadow-[0_10px_24px_rgba(0,110,255,.2)] hover:bg-[#005ED9]">
+                {isAnalyzing ? <><LoaderCircle className="size-5 animate-spin" />Checking your plan…</> : <>Check My Business<ArrowRight className="size-5" /></>}
               </Button>
-              <p className="mt-4 text-center text-xs leading-5 text-[#475569]">Demo interaction only. No data is submitted.</p>
+              <p className="mt-4 text-center text-sm text-[#68758A]">Prototype only. No information is saved.</p>
             </div>
 
-            <div className="min-h-[620px] p-5 sm:p-7">
-              {isAnalyzing && <div className="grid h-full min-h-[560px] place-items-center"><div className="text-center"><div className="mx-auto grid size-14 place-items-center rounded-2xl border border-[#008CFF]/20 bg-[#008CFF]/10"><LoaderCircle className="size-6 animate-spin text-[#00B7FF]" /></div><p className="mt-4 text-sm font-semibold text-[#CBD5E1]">Structuring illustrative analysis…</p><p className="mt-1 text-xs text-[#64748B]">Evaluating market, viability and finance</p></div></div>}
-              {showResult && !isAnalyzing && (
-                <div className="result-reveal">
-                  <div className="grid gap-5 xl:grid-cols-[0.8fr_1.2fr]">
-                    <div className="rounded-2xl border border-[#008CFF]/18 bg-[radial-gradient(circle_at_50%_0%,rgba(0,140,255,.13),transparent_60%),#0B1728] p-6 text-center">
-                      <p className="text-xs font-semibold tracking-[0.12em] text-[#64748B] uppercase">Business viability</p>
-                      <p className="mt-5 text-6xl font-semibold tracking-[-0.08em] text-white">76<span className="ml-1 text-base tracking-normal text-[#64748B]">/100</span></p>
-                      <span className="mt-4 inline-flex items-center gap-2 rounded-full border border-[#34D399]/20 bg-[#34D399]/[0.07] px-3 py-1.5 text-xs font-semibold text-[#6EE7B7]"><Check className="size-3.5" />Promising</span>
-                      <p className="mt-6 text-xs leading-5 text-[#64748B]">Composite score across four decision dimensions</p>
-                    </div>
-                    <div className="rounded-2xl border border-white/[0.06] bg-[#0B1728] p-6"><div className="space-y-5">{scores.map(([label, value, max]) => <ResultScore key={label} label={label} value={value} max={max} />)}</div></div>
-                  </div>
+            <div className="min-h-[690px] p-5 sm:p-8">
+              {!showResult && !isAnalyzing && <div className="grid h-full min-h-[620px] place-items-center rounded-[20px] border-2 border-dashed border-[#DCEBFA] bg-[#FBFDFF] p-8 text-center"><div><div className="mx-auto grid size-16 place-items-center rounded-[20px] bg-[#EFF7FF] text-[#006EFF]"><ArrowRight className="size-7" /></div><h3 className="mt-5 text-xl font-bold text-[#172033]">Your simple plan will appear here</h3><p className="mx-auto mt-2 max-w-sm text-base leading-7 text-[#5B6475]">Choose your location, business and budget, then tap “Check My Business”.</p></div></div>}
 
-                  <div className="mt-5 grid gap-4 md:grid-cols-2">
-                    <div className="insight-card"><div className="flex items-center gap-2 text-sm font-semibold text-[#F8FAFC]"><span className="size-2 rounded-full bg-[#34D399]" />Local Opportunity</div><p className="mt-3 text-sm leading-6 text-[#94A3B8]">Demand indicators suggest reasonable potential, subject to local verification.</p></div>
-                    <div className="insight-card"><div className="flex items-center gap-2 text-sm font-semibold text-[#F8FAFC]"><ShieldAlert className="size-4 text-[#FBBF24]" />Key Risk</div><p className="mt-3 text-sm leading-6 text-[#94A3B8]">Supplier dependency and existing competition should be validated.</p></div>
-                  </div>
+              {isAnalyzing && <div className="grid h-full min-h-[620px] place-items-center text-center"><div><div className="mx-auto grid size-16 place-items-center rounded-[20px] bg-[#EFF7FF] text-[#006EFF]"><LoaderCircle className="size-7 animate-spin" /></div><p className="mt-5 text-lg font-bold text-[#172033]">Checking your sample plan…</p><p className="mt-2 text-base text-[#5B6475]">Looking at customers, competition and money.</p></div></div>}
 
-                  <div className="mt-5 grid gap-4 xl:grid-cols-[0.9fr_1.1fr]">
-                    <div className="rounded-2xl border border-white/[0.06] bg-[#0B1728] p-5"><p className="text-xs font-bold tracking-[0.12em] text-[#64748B] uppercase">Financial structure</p><dl className="mt-4 space-y-3 text-sm"><div className="flex justify-between gap-4"><dt className="text-[#94A3B8]">Margin</dt><dd className="font-semibold text-white">₹1,00,000</dd></div><div className="flex justify-between gap-4"><dt className="text-[#94A3B8]">Estimated Project Cost</dt><dd className="font-semibold text-white">₹10,00,000</dd></div><div className="flex justify-between gap-4 border-t border-white/[0.06] pt-3"><dt className="text-[#94A3B8]">Potential Financing</dt><dd className="font-semibold text-[#00B7FF]">₹9,00,000</dd></div></dl></div>
-                    <div className="rounded-2xl border border-white/[0.06] bg-[#0B1728] p-5"><p className="text-xs font-bold tracking-[0.12em] text-[#64748B] uppercase">Recommended next steps</p><ol className="mt-4 space-y-3">{['Verify supplier pricing', 'Survey prospective customers', 'Review applicable financing documentation'].map((step, index) => <li key={step} className="flex items-center gap-3 text-sm text-[#CBD5E1]"><span className="font-mono text-xs font-semibold text-[#008CFF]">0{index + 1}</span><span className="h-px w-4 bg-[#008CFF]/25" />{step}</li>)}</ol></div>
-                  </div>
-                </div>
-              )}
+              {showResult && !isAnalyzing && <div className="result-reveal">
+                <div className="flex flex-wrap items-start justify-between gap-4 border-b border-[#DCEBFA] pb-6"><div><span className="inline-flex items-center gap-2 rounded-full bg-[#FFF5DD] px-3 py-1.5 text-xs font-extrabold text-[#9A6500]"><span className="size-2 rounded-full bg-[#F59E0B]" />Sample / Illustrative Analysis</span><p className="mt-5 text-sm font-extrabold tracking-[0.08em] text-[#6380A0] uppercase">Your Business Plan</p><h3 className="mt-2 text-3xl font-bold tracking-[-0.04em] text-[#172033]">{business}</h3><p className="mt-1 flex items-center gap-2 text-base text-[#5B6475]"><MapPin className="size-4 text-[#006EFF]" />Margao, Goa</p></div><div className="rounded-[18px] bg-[#E9F9F2] px-6 py-4 text-center"><p className="text-xs font-bold text-[#39745F]">Business Potential</p><p className="mt-1 text-2xl font-extrabold text-[#137A52]">GOOD</p><p className="mt-1 text-sm font-bold text-[#39745F]">76 / 100</p></div></div>
+
+                <div className="mt-6 grid gap-3 sm:grid-cols-3">{insights.map(({ icon: Icon, title, copy }) => <article key={title} className="rounded-2xl border border-[#DCEBFA] bg-[#FBFDFF] p-4"><div className="icon-bubble-sm"><Icon className="size-5" /></div><h4 className="mt-4 text-base font-bold text-[#172033]">{title}</h4><p className="mt-1 text-sm leading-6 text-[#5B6475]">{copy}</p></article>)}</div>
+
+                <div className="mt-6 rounded-[20px] border border-[#CFE3F7] bg-[#EFF7FF] p-5 sm:p-6"><h4 className="text-sm font-extrabold tracking-[0.08em] text-[#123B70] uppercase">Estimated Money Plan</h4><dl className="mt-5 space-y-4 text-base"><div className="flex justify-between gap-4"><dt className="text-[#5B6475]">Your Money</dt><dd className="font-extrabold text-[#172033]">₹{capital || '1,00,000'}</dd></div><div className="flex justify-between gap-4"><dt className="text-[#5B6475]">Estimated Project Size</dt><dd className="font-extrabold text-[#172033]">₹10,00,000</dd></div><div className="flex justify-between gap-4 border-t border-[#CFE3F7] pt-4"><dt className="font-semibold text-[#123B70]">Potential Financing</dt><dd className="font-extrabold text-[#006EFF]">₹9,00,000</dd></div></dl></div>
+
+                <div className="mt-6"><h4 className="text-sm font-extrabold tracking-[0.08em] text-[#123B70] uppercase">What Should You Do Next?</h4><ol className="mt-4 space-y-3">{['Check local shop rent', 'Speak to at least 10 potential customers', 'Compare supplier prices'].map((step, index) => <li key={step} className="flex items-center gap-4 rounded-2xl border border-[#E0ECF7] p-4 text-base font-semibold text-[#445168]"><span className="grid size-8 shrink-0 place-items-center rounded-full bg-[#006EFF] text-sm font-extrabold text-white">{index + 1}</span>{step}</li>)}</ol></div>
+
+                <Collapsible open={detailsOpen} onOpenChange={setDetailsOpen} className="mt-6 rounded-[20px] border border-[#DCEBFA]">
+                  <CollapsibleTrigger className="flex min-h-14 w-full items-center justify-between gap-4 rounded-[20px] px-5 text-left text-base font-bold text-[#006EFF] hover:bg-[#F8FBFF] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#006EFF]">See Detailed Analysis<ChevronDown className={`size-5 transition-transform ${detailsOpen ? 'rotate-180' : ''}`} /></CollapsibleTrigger>
+                  <CollapsibleContent className="border-t border-[#DCEBFA] p-5">
+                    <div className="grid gap-7 md:grid-cols-2"><div className="space-y-5">{scores.map(([label, value, max]) => <ScoreRow key={label} label={label} value={value} max={max} />)}</div><div><p className="text-sm font-bold text-[#172033]">SWOT snapshot</p><div className="mt-3 grid grid-cols-2 gap-2">{[['Strength', 'Skilled service'], ['Weakness', 'Supplier dependence'], ['Opportunity', 'Local demand'], ['Threat', 'Nearby competition']].map(([label, value]) => <div key={label} className="rounded-xl bg-[#F7FAFC] p-3"><p className="text-xs font-bold text-[#6380A0]">{label}</p><p className="mt-1 text-sm font-semibold text-[#445168]">{value}</p></div>)}</div></div></div>
+                    <div className="mt-6 grid gap-3 border-t border-[#DCEBFA] pt-5 sm:grid-cols-2"><div><p className="text-sm font-bold text-[#172033]">Data confidence</p><p className="mt-2 text-sm leading-6 text-[#5B6475]">Population: High confidence<br />Competition: Medium confidence<br />Local pricing: User verification needed</p></div><div><p className="text-sm font-bold text-[#172033]">Sources used</p><p className="mt-2 text-sm leading-6 text-[#5B6475]">Government/open data<br />Mapped business data<br />Entrepreneur input</p></div></div>
+                  </CollapsibleContent>
+                </Collapsible>
+              </div>}
             </div>
           </div>
         </div>

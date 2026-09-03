@@ -1,40 +1,24 @@
-import { ArrowDown, BrainCircuit, Calculator, Database, LayoutDashboard, MapPin, ShieldCheck, UserRound } from 'lucide-react';
+import { ArrowDown, BadgeIndianRupee, BrainCircuit, Calculator, Database, MessageSquareText } from 'lucide-react';
 import { SectionHeader } from './SectionHeader';
 
 const layers = [
-  { title: 'User Input', icon: UserRound, items: ['Location', 'Business', 'Capital'] },
-  { title: 'Data & Evidence', icon: Database, items: ['Population', 'Mapped Businesses', 'Government Data', 'Entrepreneur Input'] },
-  { title: 'Decision Engines', icon: Calculator, items: ['Viability Engine', 'Financial Rules Engine'] },
-  { title: 'AI Advisory', icon: BrainCircuit, items: ['SWOT', 'Risks', 'Explanation', 'Next Actions'] },
-  { title: 'Entrepreneur Dashboard', icon: LayoutDashboard, items: ['Clear decision', 'Action plan'] },
+  { icon: Database, title: 'Local Data', detail: 'Area, customers and nearby businesses' },
+  { icon: Calculator, title: 'Business Check', detail: 'Demand, competition and challenges' },
+  { icon: BadgeIndianRupee, title: 'Financial Rules', detail: 'Project cost and finance calculations' },
+  { icon: BrainCircuit, title: 'AI Explanation', detail: 'Makes the result easy to understand' },
+  { icon: MessageSquareText, title: 'Simple Advice', detail: 'Clear actions for the entrepreneur' },
 ] as const;
 
 export function ArchitectureSection() {
   return (
-    <section id="architecture" className="section-shell border-y border-white/[0.045] bg-[#050B15]">
+    <section id="architecture" className="section-shell bg-white">
       <div className="section-container">
-        <div className="grid gap-14 lg:grid-cols-[0.78fr_1.22fr] lg:items-center">
-          <div>
-            <SectionHeader eyebrow="System architecture" title="Evidence In. Auditable Decisions Out." description="The architecture keeps evidence collection, deterministic calculation and AI interpretation clearly separated." />
-            <div className="mt-9 rounded-2xl border border-[#008CFF]/20 bg-[#008CFF]/[0.055] p-6">
-              <ShieldCheck className="size-6 text-[#00B7FF]" />
-              <p className="mt-5 text-xl font-semibold tracking-[-0.03em] text-white">AI does not calculate critical financial values.</p>
-              <p className="mt-3 text-sm leading-6 text-[#94A3B8]">Financial calculations remain deterministic and auditable. AI interprets the evidence and explains the decision in accessible language.</p>
-            </div>
-            <div className="mt-5 flex items-center gap-3 text-sm text-[#64748B]"><MapPin className="size-4 text-[#008CFF]" />Built for a hyper-local evidence boundary</div>
-          </div>
-
-          <div className="rounded-[24px] border border-[#008CFF]/20 bg-[#07111F] p-4 sm:p-6">
-            {layers.map(({ title, icon: Icon, items }, index) => (
-              <div key={title}>
-                <div className={`grid gap-4 rounded-2xl border p-5 sm:grid-cols-[180px_1fr] sm:items-center ${index === 2 ? 'border-[#008CFF]/35 bg-[#008CFF]/[0.065]' : 'border-white/[0.06] bg-[#0B1728]'}`}>
-                  <div className="flex items-center gap-3"><div className="grid size-9 shrink-0 place-items-center rounded-xl bg-[#008CFF]/10 text-[#00B7FF]"><Icon className="size-[18px]" /></div><p className="text-sm font-semibold text-white">{title}</p></div>
-                  <div className="flex flex-wrap gap-2">{items.map((item) => <span key={item} className="rounded-lg border border-white/[0.06] bg-black/10 px-2.5 py-1.5 text-xs text-[#94A3B8]">{item}</span>)}</div>
-                </div>
-                {index < layers.length - 1 && <div className="flex h-10 items-center justify-center"><ArrowDown className="size-4 text-[#008CFF]" /></div>}
-              </div>
-            ))}
-          </div>
+        <SectionHeader eyebrow="For judges & technical review" title="How Dhandha Dost Works Behind the Scenes" description="Simple for the entrepreneur. Structured and auditable underneath." align="center" />
+        <div className="mx-auto mt-12 max-w-4xl rounded-[24px] border border-[#CFE3F7] bg-[#F8FBFF] p-5 shadow-[0_18px_50px_rgba(18,59,112,.07)] sm:p-8">
+          {layers.map(({ icon: Icon, title, detail }, index) => <div key={title}><div className={`flex flex-col items-center gap-4 rounded-[18px] border p-5 text-center sm:flex-row sm:text-left ${index === 2 ? 'border-[#98C8FF] bg-[#E7F3FF]' : 'border-[#DCEBFA] bg-white'}`}><div className="grid size-12 shrink-0 place-items-center rounded-2xl bg-[#EFF7FF] text-[#006EFF]"><Icon className="size-6" /></div><div className="flex-1"><p className="text-lg font-bold text-[#172033]">{title}</p><p className="mt-1 text-sm text-[#5B6475]">{detail}</p></div><span className="text-sm font-extrabold text-[#9AB0C8]">0{index + 1}</span></div>{index < layers.length - 1 && <div className="flex h-10 items-center justify-center"><ArrowDown className="size-5 text-[#006EFF]" /></div>}</div>)}
+        </div>
+        <div className="mx-auto mt-8 max-w-4xl rounded-[20px] bg-[#123B70] px-6 py-7 text-center text-white sm:px-10">
+          <p className="text-lg font-bold sm:text-xl">Data gives the evidence. <span className="text-[#7EC2FF]">Code performs critical calculations.</span> AI explains the result.</p>
         </div>
       </div>
     </section>

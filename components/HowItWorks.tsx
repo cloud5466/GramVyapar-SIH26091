@@ -1,55 +1,35 @@
-import { BadgeIndianRupee, BrainCircuit, BriefcaseBusiness, DatabaseZap, MapPin, Route, WalletCards } from 'lucide-react';
+import { ArrowDown, ArrowRight, BadgeIndianRupee, Handshake, MapPin, Store } from 'lucide-react';
 import { SectionHeader } from './SectionHeader';
 
-const inputs = [
-  { label: 'Location', value: 'Where will it operate?', icon: MapPin },
-  { label: 'Business idea', value: 'What will be built?', icon: BriefcaseBusiness },
-  { label: 'Available capital', value: 'What can they invest?', icon: WalletCards },
-] as const;
-
-const stages = [
-  { label: 'Local evidence', detail: 'Demand + competition', icon: DatabaseZap },
-  { label: 'Viability', detail: 'Opportunity + risk', icon: Route },
-  { label: 'Financial structure', detail: 'Cost + capital gap', icon: BadgeIndianRupee },
-  { label: 'AI advisory', detail: 'Explain + recommend', icon: BrainCircuit },
+const steps = [
+  { number: '1', icon: MapPin, title: 'Aap Kahan Rehte Ho?', detail: 'Location choose karein' },
+  { number: '2', icon: Store, title: 'Kya Business Karna Hai?', detail: 'Dairy, Tailoring, Kirana etc.' },
+  { number: '3', icon: BadgeIndianRupee, title: 'Kitna Invest Kar Sakte Ho?', detail: 'Apna available budget bataiye' },
 ] as const;
 
 export function HowItWorks() {
   return (
-    <section id="how-it-works" className="section-shell relative overflow-hidden">
-      <div className="absolute left-1/2 top-1/2 -z-10 h-80 w-3/5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#008CFF]/[0.045] blur-[100px]" />
+    <section id="how-it-works" className="section-shell bg-white">
       <div className="section-container">
-        <SectionHeader eyebrow="Decision flow" title="Three Inputs. One Actionable Decision." align="center" />
+        <SectionHeader eyebrow="Bahut aasaan" title="Bas 3 Cheezein Bataiye" description="Koi lamba form nahi. Koi mushkil financial language nahi." align="center" />
 
-        <div className="mt-12 grid gap-3 md:grid-cols-3">
-          {inputs.map(({ label, value, icon: Icon }) => (
-            <div key={label} className="flex items-center gap-4 rounded-2xl border border-[#008CFF]/15 bg-[#07111F] p-5">
-              <div className="icon-box shrink-0"><Icon className="size-5" /></div>
-              <div><p className="text-xs font-bold tracking-[0.12em] text-[#00B7FF] uppercase">{label}</p><p className="mt-1 text-sm text-[#94A3B8]">{value}</p></div>
+        <div className="mt-12 grid items-stretch gap-4 md:grid-cols-[1fr_auto_1fr_auto_1fr] md:gap-3">
+          {steps.map(({ number, icon: Icon, title, detail }, index) => (
+            <div key={title} className="contents">
+              <article className="friendly-card relative flex min-h-64 flex-col items-center justify-center p-7 text-center">
+                <span className="absolute left-5 top-5 grid size-9 place-items-center rounded-full bg-[#006EFF] text-sm font-extrabold text-white">{number}</span>
+                <div className="grid size-16 place-items-center rounded-[20px] bg-[#EFF7FF] text-[#006EFF]"><Icon className="size-8" /></div>
+                <h3 className="mt-6 text-xl font-bold tracking-[-0.03em] text-[#172033]">{title}</h3>
+                <p className="mt-2 text-base text-[#5B6475]">{detail}</p>
+              </article>
+              {index < steps.length - 1 && <div className="flex items-center justify-center py-1 text-[#77B5FF]"><ArrowDown className="size-7 md:hidden" /><ArrowRight className="hidden size-7 md:block" /></div>}
             </div>
           ))}
         </div>
 
-        <div className="relative mx-auto my-7 h-14 max-w-[80%]" aria-hidden="true">
-          <div className="absolute left-1/2 top-0 h-full w-px -translate-x-1/2 bg-gradient-to-b from-[#008CFF]/20 to-[#008CFF]" />
-          <div className="connector-pulse absolute left-1/2 top-0 size-2 -translate-x-1/2 rounded-full bg-[#22D3EE] shadow-[0_0_16px_#22D3EE]" />
-        </div>
-
-        <div className="overflow-hidden rounded-[22px] border border-[#008CFF]/20 bg-[#07111F] p-4 shadow-[0_20px_70px_rgba(0,0,0,.24)] sm:p-6">
-          <div className="grid gap-3 md:grid-cols-4">
-            {stages.map(({ label, detail, icon: Icon }, index) => (
-              <div key={label} className="relative rounded-2xl border border-white/[0.055] bg-[#0B1728] p-5">
-                <div className="flex items-center justify-between"><Icon className="size-5 text-[#00B7FF]" /><span className="font-mono text-[10px] text-[#475569]">0{index + 1}</span></div>
-                <p className="mt-7 text-sm font-semibold tracking-[-0.01em] text-[#F8FAFC]">{label}</p>
-                <p className="mt-1 text-xs text-[#64748B]">{detail}</p>
-                {index < stages.length - 1 && <span className="absolute -right-2 top-1/2 z-10 hidden size-4 -translate-y-1/2 rotate-45 border-r border-t border-[#008CFF]/40 bg-[#07111F] md:block" />}
-              </div>
-            ))}
-          </div>
-          <div className="mt-4 flex items-center justify-center gap-3 rounded-xl border border-[#34D399]/15 bg-[#34D399]/[0.05] px-5 py-4 text-center">
-            <span className="size-2 rounded-full bg-[#34D399] shadow-[0_0_12px_rgba(52,211,153,.45)]" />
-            <span className="text-xs font-bold tracking-[0.16em] text-[#6EE7B7] uppercase">Action Plan</span>
-          </div>
+        <div className="mx-auto mt-8 flex max-w-2xl flex-col items-center rounded-[22px] bg-[#006EFF] px-6 py-7 text-center text-white shadow-[0_16px_36px_rgba(0,110,255,.2)] sm:flex-row sm:justify-center sm:gap-6 sm:text-left">
+          <div className="grid size-14 place-items-center rounded-2xl bg-white/15"><Handshake className="size-7" /></div>
+          <div className="mt-4 sm:mt-0"><p className="text-sm font-bold text-white/75">Dhandha Dost</p><p className="mt-1 text-2xl font-bold tracking-[-0.03em]">Aapka Simple Business Plan</p></div>
         </div>
       </div>
     </section>

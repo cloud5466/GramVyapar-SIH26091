@@ -1,31 +1,41 @@
-import { CircleDollarSign, FileQuestion, MapPinned, PanelsTopLeft } from 'lucide-react';
+import { BadgeIndianRupee, Store, UsersRound } from 'lucide-react';
 import { SectionHeader } from './SectionHeader';
 
-const problems = [
-  { icon: MapPinned, title: 'Local Demand Unknown', copy: "Is there enough demand within the entrepreneur's actual market radius?" },
-  { icon: FileQuestion, title: 'Competition Unclear', copy: 'How many similar businesses are already operating nearby?' },
-  { icon: CircleDollarSign, title: 'Financial Complexity', copy: 'How large should the project be, and how much financing may be required?' },
-  { icon: PanelsTopLeft, title: 'Fragmented Guidance', copy: 'Business information, local knowledge and financing rules exist across different systems.' },
+const questions = [
+  {
+    icon: UsersRound,
+    number: '01',
+    title: 'Yahan Customers Milenge?',
+    copy: 'Hum aapke area ki demand aur nearby market ko samajhne mein madad karte hain.',
+  },
+  {
+    icon: Store,
+    number: '02',
+    title: 'Competition Kitna Hai?',
+    copy: 'Aas-paas similar businesses aur possible competition dekhiye.',
+  },
+  {
+    icon: BadgeIndianRupee,
+    number: '03',
+    title: 'Kitna Paisa Chahiye?',
+    copy: 'Investment, project cost aur possible financing ko simple language mein samjhiye.',
+  },
 ] as const;
 
 export function ProblemSection() {
   return (
-    <section className="section-shell border-y border-white/[0.045] bg-[#050B15]">
+    <section className="section-shell bg-[#EFF7FF]">
       <div className="section-container">
-        <SectionHeader
-          eyebrow="The challenge"
-          title="A Business Idea Shouldn't Begin With Guesswork."
-          description="Rural entrepreneurs often know what they want to build and how much they can invest, but reliable market intelligence, business planning and financial guidance remain fragmented."
-        />
-        <div className="mt-12 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-          {problems.map(({ icon: Icon, title, copy }, index) => (
-            <article key={title} className="premium-card group min-h-64 p-6 sm:p-7">
-              <div className="flex items-center justify-between">
-                <div className="icon-box"><Icon className="size-5" strokeWidth={1.7} /></div>
-                <span className="text-xs font-medium text-[#334155]">0{index + 1}</span>
+        <SectionHeader eyebrow="Business ki taiyaari" title="Business Shuru Karne Se Pehle 3 Sawal" align="center" />
+        <div className="mt-11 grid gap-5 md:grid-cols-3">
+          {questions.map(({ icon: Icon, number, title, copy }) => (
+            <article key={title} className="friendly-card group p-7 text-center sm:p-8">
+              <div className="mx-auto grid size-16 place-items-center rounded-[20px] bg-[#EFF7FF] text-[#006EFF] transition group-hover:bg-[#006EFF] group-hover:text-white">
+                <Icon className="size-8" strokeWidth={1.8} />
               </div>
-              <h3 className="mt-10 text-xl font-semibold tracking-[-0.03em] text-[#F8FAFC]">{title}</h3>
-              <p className="mt-3 text-[15px] leading-6 text-[#94A3B8]">{copy}</p>
+              <p className="mt-5 text-sm font-extrabold tracking-[0.1em] text-[#8AA0B8]">{number}</p>
+              <h3 className="mt-3 text-2xl font-bold tracking-[-0.035em] text-[#172033]">{title}</h3>
+              <p className="mx-auto mt-3 max-w-xs text-base leading-7 text-[#5B6475]">{copy}</p>
             </article>
           ))}
         </div>

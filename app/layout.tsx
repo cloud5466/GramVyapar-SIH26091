@@ -13,9 +13,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'GramVyapar AI — Hyper-Local Business Advisory',
+  title: 'Dhandha Dost — Har Business Ka Smart Dost',
   description:
-    'An evidence-backed AI advisory platform for rural micro-entrepreneurs, created for Smart India Hackathon 2026.',
+    'Simple business planning support for first-time rural and semi-urban entrepreneurs, created for Smart India Hackathon 2026.',
 };
 
 export default function RootLayout({
@@ -24,7 +24,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >

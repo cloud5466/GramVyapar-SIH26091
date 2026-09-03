@@ -1,16 +1,14 @@
-import { Network } from 'lucide-react';
+import { Handshake } from 'lucide-react';
+import { SITE_CONFIG } from '@/lib/site-config';
 
 export function BrandMark({ compact = false }: { compact?: boolean }) {
   return (
-    <span className="inline-flex items-center gap-3">
-      <span className="relative grid size-9 place-items-center rounded-xl border border-[#008CFF]/35 bg-[#008CFF]/10 text-[#00B7FF] shadow-[0_0_24px_rgba(0,140,255,0.12)]">
-        <Network className="size-[18px]" strokeWidth={1.8} aria-hidden="true" />
-        <span className="absolute inset-x-2 bottom-0 h-px bg-gradient-to-r from-transparent via-[#22D3EE] to-transparent" />
+    <span className="inline-flex shrink-0 items-center gap-3 whitespace-nowrap">
+      <span className="grid size-10 place-items-center rounded-2xl bg-[#006EFF] text-white shadow-[0_8px_20px_rgba(0,110,255,0.2)]">
+        <Handshake className="size-5" strokeWidth={2} aria-hidden="true" />
       </span>
       {!compact && (
-        <span className="text-[15px] font-semibold tracking-[-0.02em] text-[#F8FAFC]">
-          GramVyapar <span className="text-[#00B7FF]">AI</span>
-        </span>
+        <span className="text-[17px] font-bold tracking-[-0.03em] text-[#123B70]">{SITE_CONFIG.brandDisplay}</span>
       )}
     </span>
   );
