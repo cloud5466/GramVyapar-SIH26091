@@ -32,6 +32,22 @@ supersede them explicitly.
   `docs/DATA_CONTRACT.md`
 - **Supersedes:** None
 
+## Accepted Phase 5 decision
+
+- **Decision ID:** GV-VIA-001
+- **Date:** 2026-09-04
+- **Owner:** Product / Technical Lead
+- **Status:** Accepted
+- **Decision:** GramVyapar Business Potential Score is an explainable,
+  configurable heuristic, not a probability-of-success model.
+- **Rationale:** Prototype recommendations must remain reproducible and expose
+  their evidence, uncertainty and limitations without implying prediction,
+  profitability, creditworthiness or loan approval.
+- **Affected contracts/files:** `config/viability_rules.json`,
+  `prototype/engines/viability_engine.py`, `docs/VIABILITY_METHODOLOGY.md`,
+  `docs/DATA_CONTRACT.md`
+- **Supersedes:** The Phase 2 illustrative business-potential placeholder.
+
 ## New decision template
 
 - **Decision ID:**

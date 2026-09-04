@@ -1,0 +1,78 @@
+{
+  "methodology_version": "prototype-v1",
+  "score_type": "decision-support heuristic",
+  "weights": {
+    "market_opportunity": 30,
+    "competition": 25,
+    "financial_fit": 25,
+    "operational_readiness": 20
+  },
+  "market_opportunity": {
+    "population_points": {
+      "minimum": 6,
+      "maximum": 18,
+      "single_population_value": 12
+    },
+    "business_context_points": {
+      "customer_radius": 3,
+      "customer_type": 2,
+      "demand_indicators": 3
+    },
+    "population_confidence_points": {
+      "high": 4,
+      "medium": 3,
+      "low": 1,
+      "unknown": 0
+    }
+  },
+  "competition": {
+    "count_buckets": [
+      { "min_count": 0, "max_count": 0, "score": 22 },
+      { "min_count": 1, "max_count": 1, "score": 20 },
+      { "min_count": 2, "max_count": 2, "score": 17 },
+      { "min_count": 3, "max_count": 4, "score": 12 },
+      { "min_count": 5, "max_count": null, "score": 7 }
+    ],
+    "proximity_penalties": [
+      { "max_radius_ratio": 0.25, "penalty": 2 },
+      { "max_radius_ratio": 0.5, "penalty": 1 }
+    ]
+  },
+  "financial_fit": {
+    "configured": 23,
+    "configured_with_cap": 20,
+    "outside_configured_range": 8
+  },
+  "operational_readiness": {
+    "supplier_dependency_points": {
+      "low": 8,
+      "low-moderate": 7,
+      "moderate": 6,
+      "high": 3,
+      "unknown": 5
+    },
+    "seasonality_points": {
+      "low": 6,
+      "moderate": 4,
+      "high": 2,
+      "unknown": 3
+    },
+    "experience_points": {
+      "present": 4,
+      "explicitly_none": 1,
+      "unverified": 2,
+      "missing": 2
+    },
+    "supplier_distance_points": {
+      "within_customer_radius": 2,
+      "beyond_customer_radius": 0,
+      "missing": 1
+    }
+  },
+  "rating_bands": [
+    { "minimum": 0, "maximum": 39, "rating": "High Caution" },
+    { "minimum": 40, "maximum": 59, "rating": "Needs Validation" },
+    { "minimum": 60, "maximum": 79, "rating": "Promising" },
+    { "minimum": 80, "maximum": 100, "rating": "Strong Potential" }
+  ]
+}

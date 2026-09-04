@@ -2,19 +2,20 @@
 
 Owner: **Member 1 — Product / Technical Lead**
 
-Phase 4 combines canonical local evidence with the deterministic finance engine.
-`POST /api/v1/analyze` loads location, population, mapped-competitor, business
-profile and optional user-local evidence. Real viability scoring, external
-services, authentication and AI remain unimplemented.
+Phase 5 combines canonical local evidence, deterministic finance and the
+versioned explainable GramVyapar Business Potential Score.
+`POST /api/v1/analyze` returns four bounded score components with reasons, evidence,
+confidence, completeness and limitations. External services, authentication and
+AI remain unimplemented.
 
 ## Current structure
 
-    api/        Health and illustrative analysis HTTP routes
-    engines/    Deterministic finance and local-evidence engines
-    loaders/    Validated repository-relative finance and local-data loaders
-    models/     Typed API, evidence, rule and finance-result contracts
-    services/   Local/finance response assembly; illustrative viability/advisory
-    tests/      API, dataset, filtering, boundary and financing-cap tests
+    api/        Health, location and typed analysis HTTP routes
+    engines/    Deterministic local-data, finance and viability engines
+    loaders/    Validated data, finance-rule and viability-rule loaders
+    models/     Typed API, evidence, rule, finance and scoring contracts
+    services/   Deterministic result assembly; static non-AI advisory text
+    tests/      API, data, finance, scoring, boundary and sensitivity tests
 
 ## Local development
 
@@ -129,18 +130,21 @@ parses the profile radius range and filters mapped businesses by location,
 business and maximum radius. Unknown IDs return structured 404 errors. Missing
 optional user-local fields remain null.
 
-## Phase boundary
+## Phase 5 scoring
 
-The viability and advisory engine files remain non-functional architecture
-placeholders. Phase 4 does not implement:
+The viability engine consumes only typed Local Data and Finance Engine results.
+It loads `config/viability_rules.json`, calculates Market Opportunity (30),
+Competition (25), Financial Fit (25) and Operational Readiness (20), and returns
+the bounded total, rating, confidence, missing evidence and explanations. The
+fixed Phase 2 placeholder is no longer used.
 
-- viability scoring;
-- advisory generation or model calls;
-- frontend-side business calculations.
+The score is a prototype decision-support heuristic, not a prediction of
+success, credit score, profitability claim, eligibility result or loan
+approval. The exact method is documented in `docs/VIABILITY_METHODOLOGY.md`.
 
-The `76` business-potential score and `Promising` rating are explicit visual/test
-placeholders. Local evidence and finance now come from typed deterministic code;
-no local evidence is converted into a potential score yet.
+The advisory engine remains unimplemented. No model call, generated SWOT or
+free-form AI recommendation is included in Phase 5, and the frontend performs no
+business calculations.
 
 Future implementation must continue to follow `docs/ARCHITECTURE.md`,
 `docs/DATA_CONTRACT.md` and `docs/SOURCE_POLICY.md`.

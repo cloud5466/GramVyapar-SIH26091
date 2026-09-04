@@ -112,6 +112,7 @@ The machine-readable Phase 1 input schema is
 | `repayment_years` | decimal | When verified/applicable | Repayment period from the rule |
 | `moratorium_months` | integer | When verified/applicable | Moratorium from the rule |
 | `maximum_financing` | decimal/null | When a rule applies | Financing cap loaded from the rule |
+| `cap_applied` | boolean | Yes | Whether the existing Finance Engine capped the percentage-based amount |
 | `rule_source` | string/null | When a rule applies | Source recorded by the matched rule |
 | `rule_verified_date` | date/null | When a rule applies | Rule verification date in ISO API serialization |
 | `status` | string | Yes | `configured` or `outside_configured_range` |
@@ -127,17 +128,10 @@ scheme. EMI is outside the Phase 3 contract.
 
 ## Viability output
 
-| Field | Logical type | Required | Meaning |
-| --- | --- | --- | --- |
-| `demand_score` | decimal | Yes | Demand component under a documented formula |
-| `competition_score` | decimal | Yes | Competition component under a documented formula |
-| `financial_score` | decimal | Yes | Financial-feasibility component |
-| `operational_score` | decimal | Yes | Operational-readiness/risk component |
-| `total_score` | decimal | Yes | Deterministic composite |
-| `rating` | string | Yes | Label mapped from a documented threshold |
-
-No score range, weight or rating threshold is approved in Phase 1. Those rules
-must be reviewed and accompanied by boundary test cases before implementation.
+Phase 5 supersedes the Phase 1 draft with the typed `BusinessPotential`
+contract documented below. The implemented labels are Market Opportunity,
+Competition, Financial Fit and Operational Readiness. All rules are versioned,
+bounded and accompanied by boundary and sensitivity tests.
 
 ## AI advisory output
 
@@ -235,10 +229,10 @@ AdvisoryInsights
   next_steps: list[string]
 ```
 
-The sole illustrative analysis number is `business_potential.score = 76`. All
-population and competition fields remain `null`. From Phase 3 onward, only the
-`finance` object is deterministic; the overall response remains illustrative
-until local-market and viability engines replace their placeholders.
+Phase 2B used a fixed illustrative business-potential number while population
+and competition remained null. That placeholder is historical and is no longer
+part of the runtime contract. Phase 5 replaces it with deterministic evidence-
+linked component scores.
 
 ## Phase 3 deterministic finance contract
 
@@ -256,6 +250,7 @@ interest_rate: number | null
 repayment_years: number | null
 moratorium_months: integer | null
 maximum_financing: number | null
+cap_applied: boolean
 rule_source: string | null
 rule_verified_date: date | null
 status: configured | outside_configured_range
@@ -323,5 +318,54 @@ Customer radius ranges are parsed explicitly. The maximum is used as the Phase
 without distance filtering and add a warning. Unknown locations and profiles
 return `LOCATION_NOT_FOUND` and `BUSINESS_PROFILE_NOT_FOUND` respectively.
 
-`business_potential.score = 76` and its rating remain illustrative; local
-evidence must not be interpreted as a real viability score before Phase 5.
+Phase 4 deliberately left business potential illustrative. Phase 5 now consumes
+this local-evidence contract without changing its selection behavior.
+
+## Phase 5 Business Potential contract
+
+`AnalysisResponse.mode` is `deterministic-prototype`. `business_potential`
+contains:
+
+```text
+score: integer (0–100)
+rating: High Caution | Needs Validation | Promising | Strong Potential
+methodology_version: string
+score_type: string
+confidence: high | medium | low
+components: BusinessPotentialComponents
+missing_evidence: list[string]
+disclaimer: string
+```
+
+`BusinessPotentialComponents` contains exactly:
+
+```text
+market_opportunity: ScoreComponent (maximum 30)
+competition: ScoreComponent (maximum 25)
+financial_fit: ScoreComponent (maximum 25)
+operational_readiness: ScoreComponent (maximum 20)
+```
+
+Every `ScoreComponent` contains:
+
+```text
+score: integer
+max_score: integer
+reason: string
+evidence_used: list[string]
+confidence: high | medium | low
+evidence_completeness: high | medium | low
+limitations: list[string]
+```
+
+The total is the bounded sum of the four component scores. Missing source values
+are never replaced with invented facts. Neutral points for missing operational
+inputs are explicitly configured and the missing fields are listed in
+`missing_evidence`.
+
+Confidence describes evidence completeness/reliability, not percentage
+accuracy. The score is a decision-support heuristic—not a probability of
+success, credit score, profitability forecast, loan-eligibility score or loan
+approval. Exact formulas and thresholds are defined in
+`docs/VIABILITY_METHODOLOGY.md`; machine-readable rules are in
+`config/viability_rules.json`.

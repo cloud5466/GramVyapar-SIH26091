@@ -193,6 +193,31 @@ export function PrototypePreview() {
       ]
     : [];
 
+  const scoreComponents = analysis
+    ? [
+        {
+          key: 'market-opportunity',
+          label: 'Market Opportunity',
+          component: analysis.business_potential.components.market_opportunity,
+        },
+        {
+          key: 'competition',
+          label: 'Competition',
+          component: analysis.business_potential.components.competition,
+        },
+        {
+          key: 'financial-fit',
+          label: 'Financial Fit',
+          component: analysis.business_potential.components.financial_fit,
+        },
+        {
+          key: 'operational-readiness',
+          label: 'Operational Readiness',
+          component: analysis.business_potential.components.operational_readiness,
+        },
+      ]
+    : [];
+
   return (
     <section id="prototype" className="section-shell bg-white">
       <div className="section-container">
@@ -404,7 +429,7 @@ export function PrototypePreview() {
                   <div className="flex flex-wrap items-start justify-between gap-4 border-b border-[#DCEBFA] pb-6">
                     <div>
                       <span className="inline-flex items-center gap-2 rounded-full bg-[#FFF5DD] px-3 py-1.5 text-xs font-extrabold text-[#9A6500]">
-                        <span className="size-2 rounded-full bg-[#F59E0B]" />Illustrative Prototype Analysis
+                        <span className="size-2 rounded-full bg-[#34A873]" />Evidence-Based Prototype Analysis
                       </span>
                       <p className="mt-5 text-sm font-extrabold tracking-[0.08em] text-[#6380A0] uppercase">Your Business Plan</p>
                       <h3 className="mt-2 text-3xl font-bold tracking-[-0.04em] text-[#172033]">
@@ -416,15 +441,44 @@ export function PrototypePreview() {
                       </p>
                     </div>
                     <div className="rounded-[18px] bg-[#E9F9F2] px-6 py-4 text-center">
-                      <p className="text-xs font-bold text-[#39745F]">Illustrative Business Potential</p>
+                      <p className="text-xs font-bold text-[#39745F]">Business Potential</p>
                       <p className="mt-1 text-2xl font-extrabold text-[#137A52]">
                         {analysis.business_potential.rating}
                       </p>
                       <p className="mt-1 text-sm font-bold text-[#39745F]">
                         {analysis.business_potential.score} / 100
                       </p>
+                      <p className="mt-2 text-xs font-semibold text-[#39745F] capitalize">
+                        {analysis.business_potential.confidence} evidence confidence
+                      </p>
                     </div>
                   </div>
+
+                  <div className="mt-6 grid gap-3 sm:grid-cols-2">
+                    {scoreComponents.map(({ key, label, component }) => (
+                      <article key={key} className="rounded-2xl border border-[#DCEBFA] bg-white p-4">
+                        <div className="flex items-center justify-between gap-3">
+                          <h4 className="text-sm font-bold text-[#172033]">{label}</h4>
+                          <p className="text-sm font-extrabold text-[#123B70]">
+                            {component.score} / {component.max_score}
+                          </p>
+                        </div>
+                        <progress
+                          className="mt-3 h-2 w-full overflow-hidden rounded-full accent-[#006EFF]"
+                          aria-label={`${label} score`}
+                          max={component.max_score}
+                          value={component.score}
+                        >
+                          {component.score} out of {component.max_score}
+                        </progress>
+                      </article>
+                    ))}
+                  </div>
+
+                  <p className="mt-4 text-sm leading-6 text-[#68758A]">
+                    Evidence confidence describes completeness and reliability, not a percentage of
+                    accuracy.
+                  </p>
 
                   <div className="mt-6 rounded-[20px] border border-[#DCEBFA] bg-[#FBFDFF] p-5">
                     <h4 className="text-sm font-extrabold tracking-[0.08em] text-[#123B70] uppercase">What We Know So Far</h4>
@@ -531,7 +585,53 @@ export function PrototypePreview() {
                       <ChevronDown className={`size-5 transition-transform ${detailsOpen ? 'rotate-180' : ''}`} />
                     </CollapsibleTrigger>
                     <CollapsibleContent className="border-t border-[#DCEBFA] p-5">
-                      <div className="grid gap-5 md:grid-cols-2">
+                      <div>
+                        <div className="flex flex-wrap items-end justify-between gap-3">
+                          <div>
+                            <p className="text-sm font-bold text-[#172033]">Why did I get this score?</p>
+                            <p className="mt-1 text-sm leading-6 text-[#5B6475]">
+                              Each component is linked to the evidence currently available.
+                            </p>
+                          </div>
+                          <p className="text-xs font-semibold text-[#68758A]">
+                            Method: {analysis.business_potential.methodology_version}
+                          </p>
+                        </div>
+                        <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                          {scoreComponents.map(({ key, label, component }) => (
+                            <article key={`reason-${key}`} className="rounded-2xl bg-[#F7FAFC] p-4">
+                              <div className="flex items-center justify-between gap-3">
+                                <h5 className="text-sm font-bold text-[#172033]">{label}</h5>
+                                <span className="text-sm font-extrabold text-[#006EFF]">
+                                  {component.score}/{component.max_score}
+                                </span>
+                              </div>
+                              <p className="mt-2 text-sm leading-6 text-[#5B6475]">
+                                {component.reason}
+                              </p>
+                              <p className="mt-2 text-xs font-semibold text-[#68758A] capitalize">
+                                {component.confidence} confidence
+                              </p>
+                              <p className="mt-2 text-xs leading-5 text-[#68758A]">
+                                {component.limitations.join(' ')}
+                              </p>
+                            </article>
+                          ))}
+                        </div>
+                        {analysis.business_potential.missing_evidence.length > 0 && (
+                          <div className="mt-4 rounded-2xl border border-[#F2D6A2] bg-[#FFF9ED] p-4">
+                            <p className="text-sm font-bold text-[#172033]">Evidence still needed</p>
+                            <p className="mt-2 text-sm leading-6 text-[#5B6475]">
+                              {analysis.business_potential.missing_evidence.join(' · ')}
+                            </p>
+                          </div>
+                        )}
+                        <p className="mt-4 text-sm leading-6 text-[#5B6475]">
+                          {analysis.business_potential.disclaimer}
+                        </p>
+                      </div>
+
+                      <div className="mt-5 grid gap-5 border-t border-[#DCEBFA] pt-5 md:grid-cols-2">
                         <div className="rounded-2xl bg-[#F7FAFC] p-4">
                           <p className="text-sm font-bold text-[#172033]">Opportunities to Check</p>
                           <ul className="mt-3 space-y-2 text-sm leading-6 text-[#5B6475]">

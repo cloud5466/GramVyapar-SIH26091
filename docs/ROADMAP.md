@@ -44,9 +44,13 @@ honest partial-data states; API/data/finance tests and frontend lint/build pass.
 
 ## PHASE 5 — Explainable Viability Engine
 
-Implement documented scoring formulas, thresholds and confidence behavior.
+**Implemented:** versioned and validated scoring configuration, deterministic
+four-component scoring, rating bands, missing-evidence handling, evidence
+confidence, component explanations and progressive frontend disclosure.
 
-**Exit:** score calculations are reproducible and boundary tests pass.
+**Validation complete:** all six configured location/business combinations are
+reproducible; score bounds, configuration failures, competition sensitivity,
+API/local-data/finance regressions and frontend lint/build pass.
 
 ## PHASE 6 — AI Advisory Layer
 
@@ -57,8 +61,9 @@ responses pass review.
 
 ## PHASE 7 — Production Result Integration
 
-Replace illustrative fields with the versioned outputs of the reviewed Phase
-3–6 engines while preserving the established frontend/API boundary.
+Replace the remaining illustrative/static advisory fields with the reviewed
+Phase 6 output while preserving the established frontend/API boundary and the
+deterministic Phase 3–5 results.
 
 **Exit:** UI handles loading, success, unsupported and failure states without
 mixing real and illustrative data.

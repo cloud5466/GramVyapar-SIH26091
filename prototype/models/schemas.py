@@ -28,11 +28,41 @@ class BusinessContext(BaseModel):
     location_name: str
 
 
-class BusinessPotential(BaseModel):
-    """Illustrative Phase 2B potential result."""
+ConfidenceLevel = Literal["high", "medium", "low"]
 
-    score: float
+
+class ScoreComponent(BaseModel):
+    """One bounded, evidence-linked part of the potential score."""
+
+    score: int
+    max_score: int
+    reason: str
+    evidence_used: list[str]
+    confidence: ConfidenceLevel
+    evidence_completeness: ConfidenceLevel
+    limitations: list[str]
+
+
+class BusinessPotentialComponents(BaseModel):
+    """Named component scores whose configured maximums total 100."""
+
+    market_opportunity: ScoreComponent
+    competition: ScoreComponent
+    financial_fit: ScoreComponent
+    operational_readiness: ScoreComponent
+
+
+class BusinessPotential(BaseModel):
+    """Deterministic, explainable GramVyapar Business Potential Score."""
+
+    score: int
     rating: str
+    methodology_version: str
+    score_type: str
+    confidence: ConfidenceLevel
+    components: BusinessPotentialComponents
+    missing_evidence: list[str]
+    disclaimer: str
 
 
 class LocationRecord(BaseModel):
@@ -114,6 +144,7 @@ class LocalEvidenceResult(BaseModel):
     competitors: list[CompetitorRecord]
     competitor_radius_km: Decimal | None
     user_local_input: UserLocalInput | None
+    configured_population_estimates: list[int]
     evidence_status: Literal["complete", "partial", "limited"]
     warnings: list[str]
 
@@ -215,6 +246,7 @@ class FinanceResult(BaseModel):
     moratorium_months: int | None
     finance_percentage: Decimal | None
     maximum_financing: Decimal | None
+    cap_applied: bool
     rule_source: str | None
     rule_verified_date: date | None
     status: Literal["configured", "outside_configured_range"]
@@ -238,6 +270,7 @@ class FinanceSummary(BaseModel):
     repayment_years: float | None
     moratorium_months: int | None
     maximum_financing: float | None
+    cap_applied: bool
     rule_source: str | None
     rule_verified_date: date | None
     status: Literal["configured", "outside_configured_range"]
@@ -257,7 +290,7 @@ class AdvisoryInsights(BaseModel):
 
 
 class AnalysisResponse(BaseModel):
-    """Analysis response with deterministic finance and phased placeholders."""
+    """Analysis response with deterministic local, finance and potential results."""
 
     analysis_id: str
     mode: str

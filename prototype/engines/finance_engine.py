@@ -73,6 +73,7 @@ def calculate_finance(
             moratorium_months=None,
             finance_percentage=None,
             maximum_financing=None,
+            cap_applied=False,
             rule_source=None,
             rule_verified_date=None,
             status="outside_configured_range",
@@ -84,6 +85,7 @@ def calculate_finance(
         project_cost * rule.finance_percentage / Decimal("100")
     ).quantize(CURRENCY_UNIT, rounding=ROUND_HALF_UP)
     potential_financing = min(calculated_financing, rule.max_financing)
+    cap_applied = calculated_financing > rule.max_financing
 
     return FinanceResult(
         available_capital=capital,
@@ -97,6 +99,7 @@ def calculate_finance(
         moratorium_months=rule.moratorium_months,
         finance_percentage=rule.finance_percentage,
         maximum_financing=rule.max_financing,
+        cap_applied=cap_applied,
         rule_source=rule.source,
         rule_verified_date=rule.verified_date,
         status="configured",

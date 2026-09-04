@@ -96,6 +96,7 @@ class FinanceEngineTests(unittest.TestCase):
         )
         self.assertGreater(uncapped, capped_rule.max_financing)
         self.assertEqual(result.potential_financing, capped_rule.max_financing)
+        self.assertTrue(result.cap_applied)
 
 
 class FinancialRuleLoaderTests(unittest.TestCase):

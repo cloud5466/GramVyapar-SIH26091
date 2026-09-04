@@ -1,16 +1,16 @@
-"""Combine dataset-backed local evidence and finance with illustrative viability."""
+"""Combine local evidence, deterministic finance and explainable potential."""
 
 from uuid import uuid4
 
 from engines.finance_engine import calculate_finance
 from engines.local_data_engine import get_local_evidence
+from engines.viability_engine import calculate_business_potential
 from models.schemas import (
     AdvisoryInsights,
     AnalysisRequest,
     AnalysisResponse,
     BusinessProfileEvidence,
     BusinessContext,
-    BusinessPotential,
     CompetitorDetail,
     EvidenceSource,
     FinanceSummary,
@@ -19,24 +19,25 @@ from models.schemas import (
 )
 
 SUMMARY = (
-    "Your local evidence and financial structure were loaded from configured "
-    "datasets. The business-potential score remains illustrative until the "
-    "viability engine is implemented."
+    "Your local evidence, financial structure and Business Potential Score were "
+    "produced by deterministic prototype rules. Review evidence confidence and "
+    "limitations before acting."
 )
 
 DISCLAIMER = (
-    "Business potential and advisory text remain illustrative. Population is an "
-    "estimate and mapped-business coverage may be incomplete. Final eligibility "
-    "and loan sanction remain subject to the authorised financing agency and "
-    "applicable scheme conditions."
+    "Business Potential Score is a decision-support indicator based on available "
+    "evidence. It does not guarantee business success, profitability or loan "
+    "approval. Population is an estimate and mapped-business coverage may be "
+    "incomplete."
 )
 
 
 def create_demo_analysis(request: AnalysisRequest) -> AnalysisResponse:
-    """Build a Phase 4 response without viability scoring or AI."""
+    """Build a Phase 5 deterministic prototype response without AI."""
 
     local_result = get_local_evidence(request.location_id, request.business_id)
     finance_result = calculate_finance(request.available_capital)
+    business_potential = calculate_business_potential(local_result, finance_result)
     profile = local_result.business_profile
     location = local_result.location
     user_input = local_result.user_local_input
@@ -61,14 +62,14 @@ def create_demo_analysis(request: AnalysisRequest) -> AnalysisResponse:
 
     return AnalysisResponse(
         analysis_id=str(uuid4()),
-        mode="illustrative",
+        mode="deterministic-prototype",
         business=BusinessContext(
             business_id=profile.business_id,
             business_name=profile.business_name,
             location_id=location.location_id,
             location_name=location.location_name,
         ),
-        business_potential=BusinessPotential(score=76, rating="Promising"),
+        business_potential=business_potential,
         local_market=LocalMarket(
             population_estimate=location.population_estimate,
             population_year=location.population_year,
@@ -172,6 +173,7 @@ def create_demo_analysis(request: AnalysisRequest) -> AnalysisResponse:
                 if finance_result.maximum_financing is not None
                 else None
             ),
+            cap_applied=finance_result.cap_applied,
             rule_source=finance_result.rule_source,
             rule_verified_date=finance_result.rule_verified_date,
             status=finance_result.status,

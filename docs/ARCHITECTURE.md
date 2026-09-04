@@ -1,6 +1,6 @@
 # Architecture
 
-## Implemented Phase 4 flow
+## Implemented Phase 5 flow
 
     NEXT.JS UI
     Location · Business · Available capital
@@ -8,16 +8,17 @@
     FASTAPI
     Typed validation · GET /health · GET /api/v1/locations · POST /api/v1/analyze
                          ↓
-    LOCAL DATA ENGINE + DETERMINISTIC FINANCE ENGINE
-    Canonical evidence CSVs · Financial rules · Typed provenance
+    LOCAL DATA + FINANCE + VIABILITY ENGINES
+    Canonical evidence · Financial rules · Versioned scoring rules
                          ↓
     GRAMVYAPAR RESULT VIEW
     Loading · Validation · Success · Service-error states
 
 The React frontend loads canonical location options, collects input, sends the
 typed request and renders the returned response. It does not calculate project
-cost, financing, viability or market indicators. Local evidence and finance are
-selected/calculated only by their Python engines from versioned datasets.
+cost, financing, viability or market indicators. Local evidence, finance and
+potential scoring are selected/calculated only by their Python engines from
+versioned data and rules.
 
 Future backend layers remain deliberately separate:
 
@@ -25,7 +26,7 @@ Future backend layers remain deliberately separate:
 | --- | --- | --- |
 | Finance Engine | Phase 3 | Implemented |
 | Local Data Engine | Phase 4 | Implemented |
-| Viability Engine | Phase 5 | Not implemented |
+| Viability Engine | Phase 5 | Implemented |
 | AI Advisory | Phase 6 | Not implemented |
 
 ## System flow
@@ -81,8 +82,11 @@ competitor filtering and nullable user-local evidence. It performs no scoring.
 ### Viability engine
 
 Produces demand, competition, financial and operational components and a
-composite rating using documented deterministic rules. Weights, score ranges
-and thresholds remain undefined until reviewed before Phase 2.
+composite rating using documented deterministic rules. Phase 5 loads the
+`prototype-v1` methodology from `config/viability_rules.json`, validates that
+weights total 100 and returns reasons, evidence fields, confidence,
+completeness, limitations and missing evidence for every score. It never reads
+raw CSV files or recalculates Finance Engine outputs.
 
 ### Financial engine
 
@@ -140,8 +144,8 @@ The definitions and display rules are in docs/SOURCE_POLICY.md.
 
 The landing website now consumes the typed analysis response through a
 central HTTP client. React imports no engine internals and performs no business
-calculations. The UI keeps business-potential and local-market results visibly
-illustrative while presenting the deterministic finance result as an estimate.
+calculations. The UI presents the deterministic prototype Business Potential
+Score with four components, evidence confidence and progressive explanations.
 It displays explicit outside-coverage states rather than zero or invented rules.
 
 ## Phase 3 finance boundary
@@ -180,6 +184,21 @@ normalized to `tailoring` at this single loader boundary. Radius strings such as
 `1-3` are parsed into minimum/maximum values; the maximum is the Phase 4 mapped
 competitor search radius. Missing or unparseable evidence produces nulls and
 warnings rather than invented defaults.
+
+## Phase 5 viability boundary
+
+    typed LocalEvidenceResult + typed FinanceResult
+                         ↓
+    config/viability_rules.json (prototype-v1)
+                         ↓
+    Market Opportunity · Competition · Financial Fit · Operational Readiness
+                         ↓
+    bounded score + rating + confidence + reasons + limitations
+
+The score is a configurable decision-support heuristic, not a success
+probability, credit score, financial eligibility decision or profitability
+forecast. Exact rules and limitations are documented in
+`docs/VIABILITY_METHODOLOGY.md`.
 
 ## Auditability
 

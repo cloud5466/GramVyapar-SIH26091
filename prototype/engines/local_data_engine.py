@@ -116,6 +116,11 @@ def get_local_evidence(
         competitors=competitors,
         competitor_radius_km=radius,
         user_local_input=user_local_input,
+        configured_population_estimates=[
+            record.population_estimate
+            for record in data.locations
+            if record.population_estimate is not None
+        ],
         evidence_status=evidence_status,
         warnings=warnings,
     )

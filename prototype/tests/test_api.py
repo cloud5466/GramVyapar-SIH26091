@@ -1,4 +1,4 @@
-"""Regression tests for the Phase 4 GramVyapar prototype API."""
+"""Regression tests for the Phase 5 GramVyapar prototype API."""
 
 import unittest
 from uuid import UUID
@@ -37,11 +37,22 @@ class GramVyaparApiTests(unittest.TestCase):
 
         body = response.json()
         UUID(body["analysis_id"])
-        self.assertEqual(body["mode"], "illustrative")
+        self.assertEqual(body["mode"], "deterministic-prototype")
         self.assertEqual(body["business"]["business_id"], business_id)
         self.assertEqual(body["business"]["business_name"], business_name)
         self.assertEqual(body["business"]["location_name"], "Sangamner")
-        self.assertEqual(body["business_potential"], {"score": 76.0, "rating": "Promising"})
+        potential = body["business_potential"]
+        self.assertEqual(potential["methodology_version"], "prototype-v1")
+        self.assertEqual(potential["score_type"], "decision-support heuristic")
+        self.assertIn(potential["confidence"], {"high", "medium", "low"})
+        self.assertEqual(
+            sum(component["score"] for component in potential["components"].values()),
+            potential["score"],
+        )
+        self.assertEqual(
+            sum(component["max_score"] for component in potential["components"].values()),
+            100,
+        )
         self.assertEqual(body["local_market"]["population_estimate"], 65804)
         self.assertEqual(body["local_market"]["population_year"], 2011)
         self.assertEqual(body["local_market"]["location_type"], "Semi-Urban")
@@ -58,7 +69,7 @@ class GramVyaparApiTests(unittest.TestCase):
         self.assertEqual(body["finance"]["status"], "configured")
         self.assertEqual(body["finance"]["reason_code"], "SCHEME_MATCHED")
         self.assertGreater(len(body["sources"]), 0)
-        self.assertIn("Business potential", body["disclaimer"])
+        self.assertIn("Business Potential Score", body["disclaimer"])
 
     def test_valid_dairy(self) -> None:
         self.assert_valid_business("dairy", "Dairy")

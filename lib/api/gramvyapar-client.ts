@@ -14,6 +14,29 @@ export interface BusinessContext {
 export interface BusinessPotential {
   score: number;
   rating: string;
+  methodology_version: string;
+  score_type: string;
+  confidence: 'high' | 'medium' | 'low';
+  components: BusinessPotentialComponents;
+  missing_evidence: string[];
+  disclaimer: string;
+}
+
+export interface ScoreComponent {
+  score: number;
+  max_score: number;
+  reason: string;
+  evidence_used: string[];
+  confidence: 'high' | 'medium' | 'low';
+  evidence_completeness: 'high' | 'medium' | 'low';
+  limitations: string[];
+}
+
+export interface BusinessPotentialComponents {
+  market_opportunity: ScoreComponent;
+  competition: ScoreComponent;
+  financial_fit: ScoreComponent;
+  operational_readiness: ScoreComponent;
 }
 
 export interface CompetitorDetail {
@@ -83,6 +106,7 @@ export interface FinanceSummary {
   repayment_years: number | null;
   moratorium_months: number | null;
   maximum_financing: number | null;
+  cap_applied: boolean;
   rule_source: string | null;
   rule_verified_date: string | null;
   status: 'configured' | 'outside_configured_range';
