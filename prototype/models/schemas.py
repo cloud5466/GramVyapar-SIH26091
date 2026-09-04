@@ -1,4 +1,4 @@
-"""Typed request, response and deterministic finance contracts."""
+"""Typed API, local-evidence and deterministic-finance contracts."""
 
 from datetime import date
 from decimal import Decimal
@@ -35,11 +35,153 @@ class BusinessPotential(BaseModel):
     rating: str
 
 
+class LocationRecord(BaseModel):
+    """Validated canonical location row."""
+
+    location_id: str
+    location_name: str
+    block: str | None
+    district: str
+    state: str
+    latitude: Decimal
+    longitude: Decimal
+    location_type: str
+    population_estimate: int | None
+    population_year: int | None
+    population_source: str | None
+    population_confidence: str | None
+
+
+class CompetitorRecord(BaseModel):
+    """Validated mapped-business record with a canonical API business ID."""
+
+    competitor_id: str
+    location_id: str
+    business_id: str
+    business_name: str
+    latitude: Decimal
+    longitude: Decimal
+    distance_km: Decimal | None
+    source: str
+    confidence: str
+
+
+class BusinessProfile(BaseModel):
+    """Structured business profile normalized to a canonical API ID."""
+
+    source_business_id: str
+    business_id: str
+    business_name: str
+    customer_radius_text: str
+    customer_radius_min_km: Decimal | None
+    customer_radius_max_km: Decimal | None
+    customer_type: str
+    supplier_dependency: str
+    seasonality: str
+    main_operational_risks: list[str]
+    key_demand_indicators: list[str]
+
+
+class UserLocalInput(BaseModel):
+    """Optional entrepreneur evidence; blanks remain nullable, never zero."""
+
+    input_id: str
+    location_id: str
+    business_id: str
+    known_competitors: int | None
+    local_price: Decimal | None
+    monthly_rent: Decimal | None
+    supplier_distance_km: Decimal | None
+    existing_experience: str | None
+    input_source: str | None
+    input_date: date | None
+
+
+class LocalDataBundle(BaseModel):
+    """Validated canonical records and their checked relationships."""
+
+    locations: list[LocationRecord]
+    competitors: list[CompetitorRecord]
+    business_profiles: list[BusinessProfile]
+    user_local_inputs: list[UserLocalInput]
+
+
+class LocalEvidenceResult(BaseModel):
+    """Evidence selected for one location and business without scoring."""
+
+    location: LocationRecord
+    business_profile: BusinessProfile
+    competitors: list[CompetitorRecord]
+    competitor_radius_km: Decimal | None
+    user_local_input: UserLocalInput | None
+    evidence_status: Literal["complete", "partial", "limited"]
+    warnings: list[str]
+
+
+class CompetitorDetail(BaseModel):
+    """Mapped competitor fields safe for detailed UI display."""
+
+    business_name: str
+    distance_km: float | None
+    source: str
+    confidence: str
+
+
+class BusinessProfileEvidence(BaseModel):
+    """Business-profile evidence exposed for later deterministic scoring."""
+
+    business_name: str
+    customer_radius_min_km: float | None
+    customer_radius_max_km: float | None
+    customer_type: str
+    supplier_dependency: str
+    seasonality: str
+    main_operational_risks: list[str]
+    key_demand_indicators: list[str]
+
+
+class UserLocalInputEvidence(BaseModel):
+    """Nullable user-provided evidence included without interpretation."""
+
+    known_competitors: int | None
+    local_price: float | None
+    monthly_rent: float | None
+    supplier_distance_km: float | None
+    existing_experience: str | None
+    input_source: str | None
+    input_date: date | None
+
+
 class LocalMarket(BaseModel):
-    """Local-market fields reserved for later evidence integration."""
+    """Dataset-backed Phase 4 local-market response."""
 
     population_estimate: int | None
-    mapped_competitors: int | None
+    population_year: int | None
+    population_source: str | None
+    population_confidence: str | None
+    mapped_competitors: int
+    competitor_radius_km: float | None
+    competitors: list[CompetitorDetail]
+    location_type: str
+    evidence_status: Literal["complete", "partial", "limited"]
+    business_profile: BusinessProfileEvidence
+    user_local_inputs: UserLocalInputEvidence | None
+    warnings: list[str]
+
+
+class LocationOption(BaseModel):
+    """Small read-only location record used to populate the frontend picker."""
+
+    location_id: str
+    location_name: str
+    location_type: str
+
+
+class EvidenceSource(BaseModel):
+    """Source metadata retained in the analysis envelope."""
+
+    evidence_type: Literal["population", "mapped_competitor"]
+    source: str
     confidence: str
 
 
@@ -124,5 +266,5 @@ class AnalysisResponse(BaseModel):
     local_market: LocalMarket
     finance: FinanceSummary
     insights: AdvisoryInsights
-    sources: list[object]
+    sources: list[EvidenceSource]
     disclaimer: str

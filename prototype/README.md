@@ -2,19 +2,19 @@
 
 Owner: **Member 1 — Product / Technical Lead**
 
-Phase 3 connects the existing GramVyapar form to a deterministic finance engine.
-`POST /api/v1/analyze` reads only `finance/financial_rules.csv` for finance
-rules. Local-market evidence, real viability scoring, external services,
-authentication and AI remain unimplemented.
+Phase 4 combines canonical local evidence with the deterministic finance engine.
+`POST /api/v1/analyze` loads location, population, mapped-competitor, business
+profile and optional user-local evidence. Real viability scoring, external
+services, authentication and AI remain unimplemented.
 
 ## Current structure
 
     api/        Health and illustrative analysis HTTP routes
-    engines/    Deterministic finance engine; other engine placeholders preserved
-    loaders/    Validated finance-rule loader; local-data placeholder preserved
-    models/     Typed API, rule and finance-result contracts
-    services/   Finance assembly plus illustrative non-finance placeholders
-    tests/      API, loader, boundary and financing-cap tests
+    engines/    Deterministic finance and local-evidence engines
+    loaders/    Validated repository-relative finance and local-data loaders
+    models/     Typed API, evidence, rule and finance-result contracts
+    services/   Local/finance response assembly; illustrative viability/advisory
+    tests/      API, dataset, filtering, boundary and financing-cap tests
 
 ## Local development
 
@@ -58,6 +58,7 @@ The activation step is optional if commands are run directly through
 ## Local endpoints
 
 - Health endpoint: [http://localhost:8000/health](http://localhost:8000/health)
+- Locations endpoint: [http://localhost:8000/api/v1/locations](http://localhost:8000/api/v1/locations)
 - Analysis endpoint: `POST http://localhost:8000/api/v1/analyze`
 - Interactive API docs: [http://localhost:8000/docs](http://localhost:8000/docs)
 
@@ -120,19 +121,26 @@ scheme and financing values.
 Final eligibility and loan sanction remain subject to the authorised financing
 agency and applicable scheme conditions. No EMI calculation is included.
 
+## Phase 4 local evidence
+
+The frontend location picker reads the real configured locations from
+`GET /api/v1/locations`. The local-data engine accepts canonical business IDs,
+parses the profile radius range and filters mapped businesses by location,
+business and maximum radius. Unknown IDs return structured 404 errors. Missing
+optional user-local fields remain null.
+
 ## Phase boundary
 
-The local-data, viability and advisory engine files remain non-functional
-architecture placeholders. Phase 3 does not implement:
+The viability and advisory engine files remain non-functional architecture
+placeholders. Phase 4 does not implement:
 
-- local data or dataset loading;
 - viability scoring;
 - advisory generation or model calls;
 - frontend-side business calculations.
 
 The `76` business-potential score and `Promising` rating are explicit visual/test
-placeholders. Every local-market value remains null; only finance now comes from
-deterministic code and versioned rule data.
+placeholders. Local evidence and finance now come from typed deterministic code;
+no local evidence is converted into a potential score yet.
 
 Future implementation must continue to follow `docs/ARCHITECTURE.md`,
 `docs/DATA_CONTRACT.md` and `docs/SOURCE_POLICY.md`.

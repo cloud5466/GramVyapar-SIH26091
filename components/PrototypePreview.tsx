@@ -1,9 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   ArrowRight,
-  BadgeIndianRupee,
   ChevronDown,
   LoaderCircle,
   MapPin,
@@ -30,14 +29,11 @@ import {
 } from '@/components/ui/select';
 import {
   analyzeBusiness,
+  getLocations,
   type AnalysisResponse,
+  type LocationOption,
 } from '@/lib/api/gramvyapar-client';
 import { SectionHeader } from './SectionHeader';
-
-const locations = [
-  { id: 'demo-location-01', label: 'Demo Location 1' },
-  { id: 'demo-location-02', label: 'Demo Location 2' },
-] as const;
 
 const businesses = [
   { id: 'dairy', label: 'Dairy', icon: Milk },
@@ -89,7 +85,12 @@ function formatVerifiedDate(value: string | null) {
   }).format(new Date(`${value}T00:00:00Z`));
 }
 
+function formatDistance(value: number | null) {
+  return value === null ? 'Distance not available' : `${value.toLocaleString('en-IN')} km away`;
+}
+
 export function PrototypePreview() {
+  const [locations, setLocations] = useState<LocationOption[]>([]);
   const [location, setLocation] = useState('');
   const [business, setBusiness] = useState('');
   const [capital, setCapital] = useState('1,00,000');
@@ -98,6 +99,23 @@ export function PrototypePreview() {
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
   const [serviceError, setServiceError] = useState<string | null>(null);
+  const [locationError, setLocationError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let active = true;
+
+    getLocations()
+      .then((configuredLocations) => {
+        if (active) setLocations(configuredLocations);
+      })
+      .catch(() => {
+        if (active) setLocationError("We couldn't load the available locations right now.");
+      });
+
+    return () => {
+      active = false;
+    };
+  }, []);
 
   function clearPreviousResult() {
     setAnalysis(null);
@@ -139,8 +157,12 @@ export function PrototypePreview() {
         available_capital: parsedCapital,
       });
       setAnalysis(response);
-    } catch {
-      setServiceError("We couldn't prepare your analysis right now. Please try again.");
+    } catch (error) {
+      setServiceError(
+        error instanceof Error
+          ? error.message
+          : "We couldn't prepare your analysis right now. Please try again.",
+      );
     } finally {
       setIsAnalyzing(false);
     }
@@ -150,26 +172,23 @@ export function PrototypePreview() {
     ? [
         {
           icon: UsersRound,
-          title: 'Potential Customer Reach',
+          title: 'Potential Customer Base',
           copy:
             analysis.local_market.population_estimate === null
-              ? 'Awaiting verified local data'
+              ? 'Population estimate unavailable'
               : analysis.local_market.population_estimate.toLocaleString('en-IN'),
         },
         {
           icon: Store,
-          title: 'Mapped Competition',
-          copy:
-            analysis.local_market.mapped_competitors === null
-              ? 'Awaiting verified local data'
-              : analysis.local_market.mapped_competitors.toLocaleString('en-IN'),
+          title: 'Mapped Competitors',
+          copy: `${analysis.local_market.mapped_competitors.toLocaleString('en-IN')} nearby mapped ${
+            analysis.local_market.mapped_competitors === 1 ? 'business' : 'businesses'
+          }`,
         },
         {
-          icon: BadgeIndianRupee,
-          title: 'Confidence',
-          copy:
-            analysis.local_market.confidence.charAt(0).toUpperCase() +
-            analysis.local_market.confidence.slice(1),
+          icon: MapPin,
+          title: 'Location Type',
+          copy: analysis.local_market.location_type,
         },
       ]
     : [];
@@ -219,19 +238,33 @@ export function PrototypePreview() {
                       aria-describedby="plan-location-help plan-location-error"
                       className="mt-3 h-14 w-full rounded-2xl border-[#C9DDF1] bg-white px-4 text-base font-semibold text-[#26344A]"
                     >
-                      <SelectValue placeholder="Choose a demo location" />
+                      <SelectValue placeholder="Choose a location">
+                        {(selectedValue: string | null) => {
+                          const selectedLocation = locations.find(
+                            (option) => option.location_id === selectedValue,
+                          );
+                          return selectedLocation
+                            ? `${selectedLocation.location_name} · ${selectedLocation.location_type}`
+                            : 'Choose a location';
+                        }}
+                      </SelectValue>
                     </SelectTrigger>
                     <SelectContent className="border-[#CFE3F7] bg-white">
-                      {locations.map(({ id, label }) => (
-                        <SelectItem key={id} value={id}>
-                          {label}
+                      {locations.map(({ location_id, location_name, location_type }) => (
+                        <SelectItem key={location_id} value={location_id}>
+                          {location_name} · {location_type}
                         </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
                   <p id="plan-location-help" className="mt-2 text-sm text-[#68758A]">
-                    Temporary demo locations — verified location data is not connected yet.
+                    Locations currently covered by the GramVyapar evidence dataset.
                   </p>
+                  {locationError && (
+                    <p role="alert" className="mt-2 text-sm font-semibold text-[#B42318]">
+                      {locationError}
+                    </p>
+                  )}
                   {errors.location && (
                     <p id="plan-location-error" role="alert" className="mt-2 text-sm font-semibold text-[#B42318]">
                       {errors.location}
@@ -383,7 +416,7 @@ export function PrototypePreview() {
                       </p>
                     </div>
                     <div className="rounded-[18px] bg-[#E9F9F2] px-6 py-4 text-center">
-                      <p className="text-xs font-bold text-[#39745F]">Business Potential</p>
+                      <p className="text-xs font-bold text-[#39745F]">Illustrative Business Potential</p>
                       <p className="mt-1 text-2xl font-extrabold text-[#137A52]">
                         {analysis.business_potential.rating}
                       </p>
@@ -409,6 +442,13 @@ export function PrototypePreview() {
                       </article>
                     ))}
                   </div>
+
+                  {analysis.local_market.evidence_status !== 'complete' && (
+                    <p className="mt-4 rounded-2xl border border-[#F2D6A2] bg-[#FFF9ED] p-4 text-sm leading-6 text-[#7A5510]">
+                      Some local information is still missing. Review the detailed evidence before
+                      making a decision.
+                    </p>
+                  )}
 
                   <div className="mt-6 rounded-[20px] border border-[#CFE3F7] bg-[#EFF7FF] p-5 sm:p-6">
                     <h4 className="text-sm font-extrabold tracking-[0.08em] text-[#123B70] uppercase">
@@ -509,6 +549,109 @@ export function PrototypePreview() {
                           </ul>
                         </div>
                       </div>
+                      <div className="mt-5 border-t border-[#DCEBFA] pt-5">
+                        <p className="text-sm font-bold text-[#172033]">Local evidence</p>
+                        <dl className="mt-3 grid gap-4 text-sm sm:grid-cols-2">
+                          <div className="rounded-2xl bg-[#F7FAFC] p-4">
+                            <dt className="font-bold text-[#172033]">Population estimate</dt>
+                            <dd className="mt-2 leading-6 text-[#5B6475]">
+                              {analysis.local_market.population_estimate?.toLocaleString('en-IN') ??
+                                'Not available'}
+                              {analysis.local_market.population_year
+                                ? ` · ${analysis.local_market.population_year}`
+                                : ''}
+                            </dd>
+                            <dd className="mt-1 leading-6 text-[#5B6475]">
+                              Source: {analysis.local_market.population_source ?? 'Not available'}
+                            </dd>
+                            <dd className="mt-1 leading-6 text-[#5B6475]">
+                              Confidence: {analysis.local_market.population_confidence ?? 'Not available'}
+                            </dd>
+                          </div>
+                          <div className="rounded-2xl bg-[#F7FAFC] p-4">
+                            <dt className="font-bold text-[#172033]">Mapped-business search area</dt>
+                            <dd className="mt-2 leading-6 text-[#5B6475]">
+                              {analysis.local_market.competitor_radius_km === null
+                                ? 'Radius not available'
+                                : `Up to ${analysis.local_market.competitor_radius_km.toLocaleString('en-IN')} km`}
+                            </dd>
+                            <dd className="mt-1 leading-6 text-[#5B6475]">
+                              Evidence status: {analysis.local_market.evidence_status}
+                            </dd>
+                          </div>
+                        </dl>
+                      </div>
+
+                      <div className="mt-5 border-t border-[#DCEBFA] pt-5">
+                        <p className="text-sm font-bold text-[#172033]">Mapped competitors</p>
+                        {analysis.local_market.competitors.length > 0 ? (
+                          <ul className="mt-3 space-y-3">
+                            {analysis.local_market.competitors.map((competitor) => (
+                              <li
+                                key={`${competitor.business_name}-${competitor.distance_km}`}
+                                className="rounded-2xl bg-[#F7FAFC] p-4 text-sm"
+                              >
+                                <p className="font-bold text-[#172033]">{competitor.business_name}</p>
+                                <p className="mt-1 leading-6 text-[#5B6475]">
+                                  {formatDistance(competitor.distance_km)} · {competitor.source} ·{' '}
+                                  {competitor.confidence} confidence
+                                </p>
+                              </li>
+                            ))}
+                          </ul>
+                        ) : (
+                          <p className="mt-2 text-sm leading-6 text-[#5B6475]">
+                            No matching mapped businesses are available in the configured search area.
+                          </p>
+                        )}
+                      </div>
+
+                      <div className="mt-5 border-t border-[#DCEBFA] pt-5">
+                        <p className="text-sm font-bold text-[#172033]">Business profile evidence</p>
+                        <dl className="mt-3 grid gap-4 text-sm sm:grid-cols-2">
+                          <div>
+                            <dt className="font-semibold text-[#172033]">Customer type</dt>
+                            <dd className="mt-1 leading-6 text-[#5B6475]">
+                              {analysis.local_market.business_profile.customer_type}
+                            </dd>
+                          </div>
+                          <div>
+                            <dt className="font-semibold text-[#172033]">Supplier dependency</dt>
+                            <dd className="mt-1 leading-6 text-[#5B6475]">
+                              {analysis.local_market.business_profile.supplier_dependency}
+                            </dd>
+                          </div>
+                          <div>
+                            <dt className="font-semibold text-[#172033]">Seasonality</dt>
+                            <dd className="mt-1 leading-6 text-[#5B6475]">
+                              {analysis.local_market.business_profile.seasonality}
+                            </dd>
+                          </div>
+                          <div>
+                            <dt className="font-semibold text-[#172033]">Demand indicators</dt>
+                            <dd className="mt-1 leading-6 text-[#5B6475]">
+                              {analysis.local_market.business_profile.key_demand_indicators.join('; ')}
+                            </dd>
+                          </div>
+                          <div className="sm:col-span-2">
+                            <dt className="font-semibold text-[#172033]">Operational risks</dt>
+                            <dd className="mt-1 leading-6 text-[#5B6475]">
+                              {analysis.local_market.business_profile.main_operational_risks.join('; ')}
+                            </dd>
+                          </div>
+                        </dl>
+                      </div>
+
+                      {analysis.local_market.warnings.length > 0 && (
+                        <div className="mt-5 border-t border-[#DCEBFA] pt-5">
+                          <p className="text-sm font-bold text-[#172033]">Evidence limitations</p>
+                          <ul className="mt-2 space-y-2 text-sm leading-6 text-[#5B6475]">
+                            {analysis.local_market.warnings.map((warning) => (
+                              <li key={warning}>• {warning}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
                       <div className="mt-5 border-t border-[#DCEBFA] pt-5">
                         <p className="text-sm font-bold text-[#172033]">Sources</p>
                         <p className="mt-2 text-sm leading-6 text-[#5B6475]">

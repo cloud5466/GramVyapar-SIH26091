@@ -90,6 +90,24 @@ A lower-ranked source must not silently override a current primary source.
 - If evidence is missing, say so.
 - If sources conflict, mark the result for review.
 
+## Phase 4 dataset application
+
+- Population fields preserve the dataset's estimate, reference year, source and
+  confidence verbatim. The UI calls the value a population estimate, not a live
+  or exact market size.
+- Mapped-business records preserve their source and confidence. Their count is
+  labelled mapped competitors and is not interpreted as complete coverage.
+- Business-profile descriptions are structured evidence for later rules. The
+  current file has no provenance column, so the API does not invent one.
+- Values from `user_local_inputs.csv` are `USER VERIFIED` only when actually
+  supplied. Empty cells mean missing evidence and remain null, never zero.
+- Derived selection—such as filtering mapped businesses to the maximum parsed
+  customer radius—is `ESTIMATED / PROXY` behavior and must retain the radius and
+  contributing records.
+- Missing optional evidence results in null fields, an explicit warning or a
+  `partial`/`limited` evidence status; it does not fail an otherwise useful
+  response.
+
 ## Ownership and audit
 
 - Data sources: maintained in the data workspace and team handoff.

@@ -1,4 +1,4 @@
-"""Regression tests for the Phase 3 GramVyapar prototype API."""
+"""Regression tests for the Phase 4 GramVyapar prototype API."""
 
 import unittest
 from uuid import UUID
@@ -9,7 +9,7 @@ from api.main import app
 
 
 class GramVyaparApiTests(unittest.TestCase):
-    """Validate API plumbing while finance uses deterministic rule data."""
+    """Validate local evidence, finance and preserved request behavior."""
 
     @classmethod
     def setUpClass(cls) -> None:
@@ -18,7 +18,7 @@ class GramVyaparApiTests(unittest.TestCase):
     def post_analysis(
         self,
         *,
-        location_id: str = "demo-location-01",
+        location_id: str = "LOC002",
         business_id: str = "dairy",
         available_capital: float = 100000,
     ):
@@ -40,15 +40,15 @@ class GramVyaparApiTests(unittest.TestCase):
         self.assertEqual(body["mode"], "illustrative")
         self.assertEqual(body["business"]["business_id"], business_id)
         self.assertEqual(body["business"]["business_name"], business_name)
-        self.assertEqual(body["business"]["location_name"], "Demo Location 1")
+        self.assertEqual(body["business"]["location_name"], "Sangamner")
         self.assertEqual(body["business_potential"], {"score": 76.0, "rating": "Promising"})
+        self.assertEqual(body["local_market"]["population_estimate"], 65804)
+        self.assertEqual(body["local_market"]["population_year"], 2011)
+        self.assertEqual(body["local_market"]["location_type"], "Semi-Urban")
+        self.assertEqual(body["local_market"]["evidence_status"], "complete")
         self.assertEqual(
-            body["local_market"],
-            {
-                "population_estimate": None,
-                "mapped_competitors": None,
-                "confidence": "illustrative",
-            },
+            body["local_market"]["mapped_competitors"],
+            len(body["local_market"]["competitors"]),
         )
         self.assertEqual(body["finance"]["available_capital"], 100000.0)
         self.assertEqual(body["finance"]["margin_percentage"], 10.0)
@@ -57,8 +57,8 @@ class GramVyaparApiTests(unittest.TestCase):
         self.assertEqual(body["finance"]["scheme_id"], "FIN002")
         self.assertEqual(body["finance"]["status"], "configured")
         self.assertEqual(body["finance"]["reason_code"], "SCHEME_MATCHED")
-        self.assertEqual(body["sources"], [])
-        self.assertIn("Illustrative prototype analysis", body["disclaimer"])
+        self.assertGreater(len(body["sources"]), 0)
+        self.assertIn("Business potential", body["disclaimer"])
 
     def test_valid_dairy(self) -> None:
         self.assert_valid_business("dairy", "Dairy")
@@ -69,15 +69,41 @@ class GramVyaparApiTests(unittest.TestCase):
     def test_valid_kirana(self) -> None:
         self.assert_valid_business("kirana", "Kirana")
 
-    def test_second_demo_location_mapping(self) -> None:
-        response = self.post_analysis(location_id="demo-location-02")
+    def test_second_real_location_mapping(self) -> None:
+        response = self.post_analysis(location_id="LOC001")
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json()["business"]["location_name"], "Demo Location 2")
+        self.assertEqual(response.json()["business"]["location_name"], "Hiware Bazar")
 
-    def test_other_location_uses_safe_display_name(self) -> None:
+    def test_unknown_location_returns_structured_error(self) -> None:
         response = self.post_analysis(location_id="another-valid-location")
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.json()["detail"]["reason_code"], "LOCATION_NOT_FOUND")
+
+    def test_unknown_business_returns_structured_error(self) -> None:
+        response = self.post_analysis(business_id="unknown-business")
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(
+            response.json()["detail"]["reason_code"], "BUSINESS_PROFILE_NOT_FOUND"
+        )
+
+    def test_locations_endpoint_uses_canonical_dataset(self) -> None:
+        response = self.client.get("/api/v1/locations")
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json()["business"]["location_name"], "Demo Location")
+        self.assertEqual(
+            response.json(),
+            [
+                {
+                    "location_id": "LOC001",
+                    "location_name": "Hiware Bazar",
+                    "location_type": "Rural",
+                },
+                {
+                    "location_id": "LOC002",
+                    "location_name": "Sangamner",
+                    "location_type": "Semi-Urban",
+                },
+            ],
+        )
 
     def test_zero_available_capital_is_rejected(self) -> None:
         self.assertEqual(self.post_analysis(available_capital=0).status_code, 422)
@@ -100,7 +126,7 @@ class GramVyaparApiTests(unittest.TestCase):
     def test_missing_available_capital_is_rejected(self) -> None:
         response = self.client.post(
             "/api/v1/analyze",
-            json={"location_id": "demo-location-01", "business_id": "dairy"},
+            json={"location_id": "LOC002", "business_id": "dairy"},
         )
         self.assertEqual(response.status_code, 422)
 

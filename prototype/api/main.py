@@ -1,12 +1,13 @@
-"""FastAPI application for the GramVyapar Phase 3 prototype."""
+"""FastAPI application for the GramVyapar Phase 4 prototype."""
 
 from typing import Literal
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
-from models.schemas import AnalysisRequest, AnalysisResponse
+from engines.local_data_engine import LocalDataDomainError, get_available_locations
+from models.schemas import AnalysisRequest, AnalysisResponse, LocationOption
 from services.demo_analysis_service import create_demo_analysis
 
 
@@ -45,6 +46,19 @@ def health() -> HealthResponse:
 
 @app.post("/api/v1/analyze", response_model=AnalysisResponse)
 def analyze(request: AnalysisRequest) -> AnalysisResponse:
-    """Return deterministic finance with illustrative non-finance sections."""
+    """Return dataset-backed local evidence and deterministic finance."""
 
-    return create_demo_analysis(request)
+    try:
+        return create_demo_analysis(request)
+    except LocalDataDomainError as error:
+        raise HTTPException(
+            status_code=404,
+            detail={"reason_code": error.reason_code, "message": error.message},
+        ) from error
+
+
+@app.get("/api/v1/locations", response_model=list[LocationOption])
+def locations() -> list[LocationOption]:
+    """Return configured MVP locations from the canonical dataset."""
+
+    return get_available_locations()

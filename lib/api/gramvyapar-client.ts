@@ -16,9 +16,58 @@ export interface BusinessPotential {
   rating: string;
 }
 
+export interface CompetitorDetail {
+  business_name: string;
+  distance_km: number | null;
+  source: string;
+  confidence: string;
+}
+
+export interface BusinessProfileEvidence {
+  business_name: string;
+  customer_radius_min_km: number | null;
+  customer_radius_max_km: number | null;
+  customer_type: string;
+  supplier_dependency: string;
+  seasonality: string;
+  main_operational_risks: string[];
+  key_demand_indicators: string[];
+}
+
+export interface UserLocalInputEvidence {
+  known_competitors: number | null;
+  local_price: number | null;
+  monthly_rent: number | null;
+  supplier_distance_km: number | null;
+  existing_experience: string | null;
+  input_source: string | null;
+  input_date: string | null;
+}
+
 export interface LocalMarket {
   population_estimate: number | null;
-  mapped_competitors: number | null;
+  population_year: number | null;
+  population_source: string | null;
+  population_confidence: string | null;
+  mapped_competitors: number;
+  competitor_radius_km: number | null;
+  competitors: CompetitorDetail[];
+  location_type: string;
+  evidence_status: 'complete' | 'partial' | 'limited';
+  business_profile: BusinessProfileEvidence;
+  user_local_inputs: UserLocalInputEvidence | null;
+  warnings: string[];
+}
+
+export interface LocationOption {
+  location_id: string;
+  location_name: string;
+  location_type: string;
+}
+
+export interface EvidenceSource {
+  evidence_type: 'population' | 'mapped_competitor';
+  source: string;
   confidence: string;
 }
 
@@ -56,12 +105,21 @@ export interface AnalysisResponse {
   local_market: LocalMarket;
   finance: FinanceSummary;
   insights: AdvisoryInsights;
-  sources: unknown[];
+  sources: EvidenceSource[];
   disclaimer: string;
 }
 
 const configuredApiUrl = process.env.NEXT_PUBLIC_GRAMVYAPAR_API_URL?.trim();
 const API_BASE_URL = (configuredApiUrl || 'http://localhost:8000').replace(/\/+$/, '');
+
+async function getErrorMessage(response: Response) {
+  try {
+    const body = (await response.json()) as { detail?: { message?: string } };
+    return body.detail?.message;
+  } catch {
+    return undefined;
+  }
+}
 
 export async function analyzeBusiness(request: AnalysisRequest): Promise<AnalysisResponse> {
   let response: Response;
@@ -77,8 +135,26 @@ export async function analyzeBusiness(request: AnalysisRequest): Promise<Analysi
   }
 
   if (!response.ok) {
-    throw new Error('GramVyapar analysis request was not successful.');
+    throw new Error(
+      (await getErrorMessage(response)) || 'GramVyapar analysis request was not successful.',
+    );
   }
 
   return (await response.json()) as AnalysisResponse;
+}
+
+export async function getLocations(): Promise<LocationOption[]> {
+  let response: Response;
+
+  try {
+    response = await fetch(`${API_BASE_URL}/api/v1/locations`);
+  } catch {
+    throw new Error('GramVyapar location service is unavailable.');
+  }
+
+  if (!response.ok) {
+    throw new Error('GramVyapar locations could not be loaded.');
+  }
+
+  return (await response.json()) as LocationOption[];
 }

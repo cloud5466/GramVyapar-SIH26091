@@ -34,11 +34,13 @@ must still sign off the official rule transcription before production use.
 
 ## PHASE 4 — Local Data Engine
 
-Implement normalized data loading, location/business lookup, approved proxies
-and provenance handling.
+**Implemented:** normalized repository-relative data loading, canonical
+location/business lookup, explicit radius-range parsing, mapped competitor
+filtering, nullable user evidence, provenance, structured errors and frontend
+location/evidence integration.
 
-**Exit:** both demo locations return traceable indicators and honest missing-data
-states.
+**Validation complete:** both configured locations return traceable evidence and
+honest partial-data states; API/data/finance tests and frontend lint/build pass.
 
 ## PHASE 5 — Explainable Viability Engine
 

@@ -1,30 +1,30 @@
 # Architecture
 
-## Implemented Phase 3 flow
+## Implemented Phase 4 flow
 
     NEXT.JS UI
     Location · Business · Available capital
                          ↓ HTTP REST API
     FASTAPI
-    Typed validation · GET /health · POST /api/v1/analyze
+    Typed validation · GET /health · GET /api/v1/locations · POST /api/v1/analyze
                          ↓
-    ANALYSIS SERVICE + DETERMINISTIC FINANCE ENGINE
-    financial_rules.csv · Decimal calculation · Rule routing · Financing cap
+    LOCAL DATA ENGINE + DETERMINISTIC FINANCE ENGINE
+    Canonical evidence CSVs · Financial rules · Typed provenance
                          ↓
     GRAMVYAPAR RESULT VIEW
     Loading · Validation · Success · Service-error states
 
-The React frontend collects input, sends the typed request and renders the
-returned response. It does not calculate project cost, financing, viability or
-market indicators. Project cost and potential financing are calculated only by
-the Python engine from the versioned finance rule dataset.
+The React frontend loads canonical location options, collects input, sends the
+typed request and renders the returned response. It does not calculate project
+cost, financing, viability or market indicators. Local evidence and finance are
+selected/calculated only by their Python engines from versioned datasets.
 
 Future backend layers remain deliberately separate:
 
 | Layer | Planned phase | Current status |
 | --- | --- | --- |
 | Finance Engine | Phase 3 | Implemented |
-| Local Data Engine | Phase 4 | Not implemented |
+| Local Data Engine | Phase 4 | Implemented |
 | Viability Engine | Phase 5 | Not implemented |
 | AI Advisory | Phase 6 | Not implemented |
 
@@ -74,7 +74,9 @@ It must report missing or conflicting evidence and must not fabricate defaults.
 
 Selects evidence for the requested location/business boundary and calculates
 only approved proxies. It preserves the inputs and methods supporting each
-derived indicator.
+derived indicator. Phase 4 implements exact location selection, the canonical
+business-ID translation boundary, explicit customer-radius parsing, mapped
+competitor filtering and nullable user-local evidence. It performs no scoring.
 
 ### Viability engine
 
@@ -156,6 +158,28 @@ The loader resolves `finance/financial_rules.csv` from the repository location,
 not the terminal's current working directory. It validates required columns,
 types, dates, scheme-ID uniqueness and non-overlapping ranges before any rule is
 used. No EMI or amortization method is implemented.
+
+## Phase 4 local-evidence boundary
+
+    GET /api/v1/locations
+             ↓
+    data/processed/locations.csv
+
+    location_id + canonical business_id
+             ↓
+    validated repository-relative CSV loaders
+             ↓
+    location + population + business profile
+    + radius-filtered mapped competitors + optional user input
+             ↓
+    typed LocalEvidenceResult (complete / partial / limited)
+
+CSV business labels and `BUS001`–`BUS003` remain internal. The API accepts only
+`dairy`, `tailoring` and `kirana`. The harmless source label `Tailorings` is
+normalized to `tailoring` at this single loader boundary. Radius strings such as
+`1-3` are parsed into minimum/maximum values; the maximum is the Phase 4 mapped
+competitor search radius. Missing or unparseable evidence produces nulls and
+warnings rather than invented defaults.
 
 ## Auditability
 

@@ -272,3 +272,56 @@ min(project_cost × finance_percentage / 100, maximum_financing)
 
 Financial values are estimates. Final eligibility and loan sanction remain
 subject to the authorised financing agency and applicable scheme conditions.
+
+## Phase 4 local-evidence contract
+
+The public API uses canonical business IDs `dairy`, `tailoring` and `kirana`.
+Source IDs such as `BUS001` and display/category variants remain behind the data
+loader translation boundary.
+
+`GET /api/v1/locations` returns:
+
+```text
+location_id: string
+location_name: string
+location_type: string
+```
+
+The `local_market` object in `AnalysisResponse` contains:
+
+```text
+population_estimate: integer | null
+population_year: integer | null
+population_source: string | null
+population_confidence: string | null
+mapped_competitors: integer
+competitor_radius_km: number | null
+competitors: list[CompetitorDetail]
+location_type: string
+evidence_status: complete | partial | limited
+business_profile: BusinessProfileEvidence
+user_local_inputs: UserLocalInputEvidence | null
+warnings: list[string]
+```
+
+`CompetitorDetail` contains `business_name`, nullable `distance_km`, `source`
+and `confidence`. The count always equals the returned list after location,
+business-category and radius filtering. It describes mapped records, never all
+real-world competitors.
+
+`BusinessProfileEvidence` contains the parsed minimum/maximum customer radius,
+customer type, supplier dependency, seasonality, operational-risk strings and
+demand-indicator strings. These fields are evidence inputs for Phase 5; they do
+not produce a score in Phase 4.
+
+`UserLocalInputEvidence` contains nullable `known_competitors`, `local_price`,
+`monthly_rent`, `supplier_distance_km`, `existing_experience`, `input_source`
+and `input_date`. Empty CSV fields serialize as null and never as zero.
+
+Customer radius ranges are parsed explicitly. The maximum is used as the Phase
+4 mapped-competitor search radius. Unparseable radii retain the matching records
+without distance filtering and add a warning. Unknown locations and profiles
+return `LOCATION_NOT_FOUND` and `BUSINESS_PROFILE_NOT_FOUND` respectively.
+
+`business_potential.score = 76` and its rating remain illustrative; local
+evidence must not be interpreted as a real viability score before Phase 5.
