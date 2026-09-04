@@ -1,4 +1,4 @@
-"""FastAPI application for the GramVyapar Phase 2 prototype."""
+"""FastAPI application for the GramVyapar Phase 3 prototype."""
 
 from typing import Literal
 
@@ -45,6 +45,6 @@ def health() -> HealthResponse:
 
 @app.post("/api/v1/analyze", response_model=AnalysisResponse)
 def analyze(request: AnalysisRequest) -> AnalysisResponse:
-    """Return the Phase 2B illustrative analysis contract."""
+    """Return deterministic finance with illustrative non-finance sections."""
 
     return create_demo_analysis(request)

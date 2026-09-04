@@ -1,7 +1,8 @@
-"""Illustrative Phase 2B service for validating API request/response plumbing."""
+"""Phase 3 service combining real finance output with illustrative placeholders."""
 
 from uuid import uuid4
 
+from engines.finance_engine import calculate_finance
 from models.schemas import (
     AdvisoryInsights,
     AnalysisRequest,
@@ -25,14 +26,15 @@ LOCATION_DISPLAY_NAMES = {
 }
 
 SUMMARY = (
-    "Your business idea has been received successfully. Verified local-market "
-    "and financial analysis will be enabled after data and financial-rule "
-    "integration."
+    "Your business idea has been received successfully. Its financial structure "
+    "uses the configured rule dataset. Verified local-market analysis will be "
+    "enabled after data integration."
 )
 
 DISCLAIMER = (
-    "Illustrative prototype analysis — verified local and financial data "
-    "integration is not enabled in Phase 2."
+    "Illustrative prototype analysis — business potential and local-market "
+    "insights remain illustrative. Final eligibility and loan sanction remain "
+    "subject to the authorised financing agency and applicable scheme conditions."
 )
 
 
@@ -43,6 +45,7 @@ def create_demo_analysis(request: AnalysisRequest) -> AnalysisResponse:
         request.business_id.casefold(), "Demo Business"
     )
     location_name = LOCATION_DISPLAY_NAMES.get(request.location_id, "Demo Location")
+    finance_result = calculate_finance(request.available_capital)
 
     return AnalysisResponse(
         analysis_id=str(uuid4()),
@@ -60,13 +63,42 @@ def create_demo_analysis(request: AnalysisRequest) -> AnalysisResponse:
             confidence="illustrative",
         ),
         finance=FinanceSummary(
-            available_capital=request.available_capital,
-            project_cost=None,
-            potential_financing=None,
-            scheme_name=None,
-            interest_rate=None,
-            repayment_years=None,
-            moratorium_months=None,
+            available_capital=float(finance_result.available_capital),
+            margin_percentage=float(finance_result.margin_percentage),
+            project_cost=float(finance_result.project_cost),
+            potential_financing=(
+                float(finance_result.potential_financing)
+                if finance_result.potential_financing is not None
+                else None
+            ),
+            scheme_id=finance_result.scheme_id,
+            scheme_name=finance_result.scheme_name,
+            finance_percentage=(
+                float(finance_result.finance_percentage)
+                if finance_result.finance_percentage is not None
+                else None
+            ),
+            interest_rate=(
+                float(finance_result.interest_rate)
+                if finance_result.interest_rate is not None
+                else None
+            ),
+            repayment_years=(
+                float(finance_result.repayment_years)
+                if finance_result.repayment_years is not None
+                else None
+            ),
+            moratorium_months=finance_result.moratorium_months,
+            maximum_financing=(
+                float(finance_result.maximum_financing)
+                if finance_result.maximum_financing is not None
+                else None
+            ),
+            rule_source=finance_result.rule_source,
+            rule_verified_date=finance_result.rule_verified_date,
+            status=finance_result.status,
+            reason_code=finance_result.reason_code,
+            notes=finance_result.notes,
         ),
         insights=AdvisoryInsights(
             summary=SUMMARY,
@@ -77,7 +109,7 @@ def create_demo_analysis(request: AnalysisRequest) -> AnalysisResponse:
             ],
             risks=[
                 "Verified local market evidence is not connected yet",
-                "Financial eligibility has not been calculated yet",
+                "Final financing eligibility is decided by the authorised agency",
             ],
             next_steps=[
                 "Validate demand with potential customers",

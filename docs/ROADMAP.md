@@ -24,9 +24,13 @@ datasets or fabricated engine calculations.
 
 ## PHASE 3 — Financial Engine
 
-Implement verified financial formulas, boundaries, reason codes and tests.
+**Implemented:** deterministic Decimal-based project structuring, versioned CSV
+rule loading, inclusive boundary routing, financing caps, reason codes,
+provenance fields, API/UI integration and automated tests.
 
-**Exit:** finance test cases pass and a second reviewer signs off the rules.
+**Validation complete:** finance and API tests pass; frontend lint/build and the
+end-to-end golden case pass. **Governance remaining:** an independent reviewer
+must still sign off the official rule transcription before production use.
 
 ## PHASE 4 — Local Data Engine
 

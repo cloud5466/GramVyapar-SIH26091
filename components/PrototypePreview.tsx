@@ -61,8 +61,32 @@ function formatCurrency(value: number) {
   return currencyFormatter.format(value);
 }
 
-function pendingCurrency(value: number | null) {
-  return value === null ? 'Financial engine pending' : formatCurrency(value);
+function formatOptionalCurrency(value: number | null) {
+  return value === null ? 'Not available' : formatCurrency(value);
+}
+
+function formatPercentage(value: number | null) {
+  return value === null ? 'Not available' : `${value.toLocaleString('en-IN')}% p.a.`;
+}
+
+function formatYears(value: number | null) {
+  if (value === null) return 'Not available';
+  return `${value.toLocaleString('en-IN')} ${value === 1 ? 'year' : 'years'}`;
+}
+
+function formatMonths(value: number | null) {
+  if (value === null) return 'Not available';
+  return `${value.toLocaleString('en-IN')} ${value === 1 ? 'month' : 'months'}`;
+}
+
+function formatVerifiedDate(value: string | null) {
+  if (value === null) return 'Not available';
+  return new Intl.DateTimeFormat('en-IN', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+    timeZone: 'UTC',
+  }).format(new Date(`${value}T00:00:00Z`));
 }
 
 export function PrototypePreview() {
@@ -387,33 +411,60 @@ export function PrototypePreview() {
                   </div>
 
                   <div className="mt-6 rounded-[20px] border border-[#CFE3F7] bg-[#EFF7FF] p-5 sm:p-6">
-                    <h4 className="text-sm font-extrabold tracking-[0.08em] text-[#123B70] uppercase">Money Plan</h4>
+                    <h4 className="text-sm font-extrabold tracking-[0.08em] text-[#123B70] uppercase">
+                      Estimated financial structure
+                    </h4>
                     <dl className="mt-5 space-y-4 text-base">
                       <div className="flex justify-between gap-4">
-                        <dt className="text-[#5B6475]">Your Available Capital</dt>
+                        <dt className="text-[#5B6475]">Your Money</dt>
                         <dd className="text-right font-extrabold text-[#172033]">
                           {formatCurrency(analysis.finance.available_capital)}
                         </dd>
                       </div>
                       <div className="flex justify-between gap-4">
-                        <dt className="text-[#5B6475]">Estimated Project Cost</dt>
+                        <dt className="text-[#5B6475]">Estimated Project Size</dt>
                         <dd className="text-right font-extrabold text-[#172033]">
-                          {pendingCurrency(analysis.finance.project_cost)}
+                          {formatCurrency(analysis.finance.project_cost)}
                         </dd>
                       </div>
                       <div className="flex justify-between gap-4 border-t border-[#CFE3F7] pt-4">
                         <dt className="font-semibold text-[#123B70]">Potential Financing</dt>
                         <dd className="text-right font-extrabold text-[#006EFF]">
-                          {pendingCurrency(analysis.finance.potential_financing)}
+                          {formatOptionalCurrency(analysis.finance.potential_financing)}
                         </dd>
                       </div>
                       <div className="flex justify-between gap-4">
-                        <dt className="text-[#5B6475]">Scheme</dt>
+                        <dt className="text-[#5B6475]">Financing Route</dt>
                         <dd className="text-right font-extrabold text-[#172033]">
-                          {analysis.finance.scheme_name ?? 'Financial engine pending'}
+                          {analysis.finance.scheme_name ?? 'Outside current coverage'}
+                        </dd>
+                      </div>
+                      <div className="flex justify-between gap-4">
+                        <dt className="text-[#5B6475]">Interest</dt>
+                        <dd className="text-right font-extrabold text-[#172033]">
+                          {formatPercentage(analysis.finance.interest_rate)}
+                        </dd>
+                      </div>
+                      <div className="flex justify-between gap-4">
+                        <dt className="text-[#5B6475]">Repayment Period</dt>
+                        <dd className="text-right font-extrabold text-[#172033]">
+                          {formatYears(analysis.finance.repayment_years)}
+                        </dd>
+                      </div>
+                      <div className="flex justify-between gap-4">
+                        <dt className="text-[#5B6475]">Moratorium</dt>
+                        <dd className="text-right font-extrabold text-[#172033]">
+                          {formatMonths(analysis.finance.moratorium_months)}
                         </dd>
                       </div>
                     </dl>
+                    <p className="mt-5 border-t border-[#CFE3F7] pt-4 text-sm leading-6 text-[#52657C]">
+                      {analysis.finance.notes}
+                    </p>
+                    <p className="mt-3 text-sm leading-6 text-[#52657C]">
+                      Final eligibility and loan sanction remain subject to the authorised financing
+                      agency and applicable scheme conditions.
+                    </p>
                   </div>
 
                   <div className="mt-6">
@@ -463,8 +514,22 @@ export function PrototypePreview() {
                         <p className="mt-2 text-sm leading-6 text-[#5B6475]">
                           {analysis.sources.length > 0
                             ? `${analysis.sources.length} source records returned.`
-                            : 'No verified sources are connected in Phase 2.'}
+                            : 'Local-market sources are not connected yet.'}
                         </p>
+                      </div>
+                      <div className="mt-5 grid gap-4 border-t border-[#DCEBFA] pt-5 sm:grid-cols-2">
+                        <div>
+                          <p className="text-sm font-bold text-[#172033]">Financing rule source</p>
+                          <p className="mt-2 text-sm leading-6 text-[#5B6475]">
+                            {analysis.finance.rule_source ?? 'No configured rule matched'}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-sm font-bold text-[#172033]">Rule verified</p>
+                          <p className="mt-2 text-sm leading-6 text-[#5B6475]">
+                            {formatVerifiedDate(analysis.finance.rule_verified_date)}
+                          </p>
+                        </div>
                       </div>
                     </CollapsibleContent>
                   </Collapsible>

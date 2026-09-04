@@ -1,6 +1,8 @@
-"""Typed request and response contracts for the GramVyapar prototype API."""
+"""Typed request, response and deterministic finance contracts."""
 
-from typing import Annotated
+from datetime import date
+from decimal import Decimal
+from typing import Annotated, Literal
 
 from pydantic import BaseModel, Field, StringConstraints
 
@@ -41,16 +43,66 @@ class LocalMarket(BaseModel):
     confidence: str
 
 
+class FinancialRule(BaseModel):
+    """One validated financing rule loaded from the canonical CSV."""
+
+    scheme_id: str
+    scheme_name: str
+    min_project_cost: Decimal
+    max_project_cost: Decimal
+    max_financing: Decimal
+    interest_rate: Decimal
+    repayment_years: Decimal
+    moratorium_months: int
+    source: str
+    verified_date: date
+    finance_percentage: Decimal
+
+
+class FinanceResult(BaseModel):
+    """Precise internal result produced by the deterministic finance engine."""
+
+    available_capital: Decimal
+    margin_percentage: Decimal
+    project_cost: Decimal
+    potential_financing: Decimal | None
+    scheme_id: str | None
+    scheme_name: str | None
+    interest_rate: Decimal | None
+    repayment_years: Decimal | None
+    moratorium_months: int | None
+    finance_percentage: Decimal | None
+    maximum_financing: Decimal | None
+    rule_source: str | None
+    rule_verified_date: date | None
+    status: Literal["configured", "outside_configured_range"]
+    reason_code: Literal[
+        "SCHEME_MATCHED", "PROJECT_COST_OUTSIDE_CONFIGURED_SCHEMES"
+    ]
+    notes: str
+
+
 class FinanceSummary(BaseModel):
-    """Financial fields reserved for later deterministic calculation."""
+    """JSON-safe deterministic financial estimate returned to the UI."""
 
     available_capital: float
-    project_cost: float | None
+    margin_percentage: float
+    project_cost: float
     potential_financing: float | None
+    scheme_id: str | None
     scheme_name: str | None
+    finance_percentage: float | None
     interest_rate: float | None
     repayment_years: float | None
     moratorium_months: int | None
+    maximum_financing: float | None
+    rule_source: str | None
+    rule_verified_date: date | None
+    status: Literal["configured", "outside_configured_range"]
+    reason_code: Literal[
+        "SCHEME_MATCHED", "PROJECT_COST_OUTSIDE_CONFIGURED_SCHEMES"
+    ]
+    notes: str
 
 
 class AdvisoryInsights(BaseModel):
@@ -63,7 +115,7 @@ class AdvisoryInsights(BaseModel):
 
 
 class AnalysisResponse(BaseModel):
-    """Complete Phase 2B illustrative analysis response contract."""
+    """Analysis response with deterministic finance and phased placeholders."""
 
     analysis_id: str
     mode: str

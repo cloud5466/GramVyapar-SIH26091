@@ -1,1 +1,10 @@
 test_case_id,rule_or_scheme_id,scenario,input_project_cost,input_available_capital,expected_result,expected_reason,source_reference,status,notes
+FTC001,FIN001,Small positive capital,10,1,FIN001,First inclusive range,NSFDC-FAQ-2026,implemented,Project cost equals capital divided by 10 percent
+FTC002,FIN001,Exact first maximum,140000,14000,FIN001,Inclusive maximum boundary,NSFDC-FAQ-2026,implemented,
+FTC003,FIN002,One rupee above first maximum,140001,14000.10,FIN002,Next configured inclusive range,NSFDC-FAQ-2026,implemented,
+FTC004,FIN002,One lakh available capital,1000000,100000,FIN002 with 900000 potential financing,Configured 90 percent rule,NSFDC-FAQ-2026,implemented,
+FTC005,FIN002,Maximum supported project cost,5000000,500000,FIN002 with 4500000 potential financing,Inclusive maximum boundary,NSFDC-FAQ-2026,implemented,
+FTC006,,Above configured maximum,5000001,500000.10,outside_configured_range,No configured project-cost range,NSFDC-FAQ-2026,implemented,No scheme or financing values returned
+FTC007,,Zero available capital,,0,error,Capital must be greater than zero,,implemented,Defensive engine validation
+FTC008,,Negative available capital,,-1,error,Capital must be greater than zero,,implemented,Defensive engine validation
+FTC009,FIN001,Maximum-financing cap,140000,14000,125000 potential financing,126000 uncapped amount exceeds 125000 cap,NSFDC-FAQ-2026,implemented,Cap must win

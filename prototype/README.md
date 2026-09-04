@@ -2,20 +2,19 @@
 
 Owner: **Member 1 — Product / Technical Lead**
 
-Phase 2C connects the existing GramVyapar form to the typed illustrative
-FastAPI contract. `POST /api/v1/analyze` still validates application plumbing
-only. It contains no evidence-backed business analysis, financial calculations,
-real viability scoring, datasets, external services, authentication or AI
-integration.
+Phase 3 connects the existing GramVyapar form to a deterministic finance engine.
+`POST /api/v1/analyze` reads only `finance/financial_rules.csv` for finance
+rules. Local-market evidence, real viability scoring, external services,
+authentication and AI remain unimplemented.
 
 ## Current structure
 
     api/        Health and illustrative analysis HTTP routes
-    engines/    Preserved Phase 1 engine placeholders
-    loaders/    Preserved Phase 1 loader placeholders
-    models/     Typed Phase 2B API contracts
-    services/   Illustrative response assembly only
-    tests/      Backend contract and validation tests
+    engines/    Deterministic finance engine; other engine placeholders preserved
+    loaders/    Validated finance-rule loader; local-data placeholder preserved
+    models/     Typed API, rule and finance-result contracts
+    services/   Finance assembly plus illustrative non-finance placeholders
+    tests/      API, loader, boundary and financing-cap tests
 
 ## Local development
 
@@ -59,7 +58,7 @@ The activation step is optional if commands are run directly through
 ## Local endpoints
 
 - Health endpoint: [http://localhost:8000/health](http://localhost:8000/health)
-- Illustrative analysis endpoint: `POST http://localhost:8000/api/v1/analyze`
+- Analysis endpoint: `POST http://localhost:8000/api/v1/analyze`
 - Interactive API docs: [http://localhost:8000/docs](http://localhost:8000/docs)
 
 Expected health response:
@@ -72,7 +71,7 @@ Expected health response:
 }
 ```
 
-## Test the Phase 2B API
+## Test the Phase 3 API
 
 Open [http://localhost:8000/docs](http://localhost:8000/docs), expand
 `POST /api/v1/analyze`, choose **Try it out**, enter the request body and choose
@@ -110,19 +109,30 @@ the central API client. If the frontend is intentionally started on another
 port, add both hostname variants for that exact port to the development
 allowlist. Production CORS is not configured.
 
+## Phase 3 finance behavior
+
+The engine treats available capital as a 10% margin and calculates project cost
+with decimal arithmetic. It selects a rule using inclusive project-cost bounds,
+then caps percentage-based potential financing at the rule's maximum. Projects
+outside all configured ranges return a structured coverage response with null
+scheme and financing values.
+
+Final eligibility and loan sanction remain subject to the authorised financing
+agency and applicable scheme conditions. No EMI calculation is included.
+
 ## Phase boundary
 
-The files under `engines/` and `loaders/` remain non-functional architecture
-placeholders. Phase 2C does not implement:
+The local-data, viability and advisory engine files remain non-functional
+architecture placeholders. Phase 3 does not implement:
 
-- financial or eligibility rules;
 - local data or dataset loading;
 - viability scoring;
 - advisory generation or model calls;
 - frontend-side business calculations.
 
 The `76` business-potential score and `Promising` rating are explicit visual/test
-placeholders. Every local-market and calculated financial value remains null.
+placeholders. Every local-market value remains null; only finance now comes from
+deterministic code and versioned rule data.
 
 Future implementation must continue to follow `docs/ARCHITECTURE.md`,
 `docs/DATA_CONTRACT.md` and `docs/SOURCE_POLICY.md`.

@@ -101,17 +101,29 @@ The machine-readable Phase 1 input schema is
 
 | Field | Logical type | Required | Meaning |
 | --- | --- | --- | --- |
-| `project_cost` | decimal | Yes | Deterministically calculated or selected project cost |
-| `potential_financing` | decimal | Yes | Indicative financing under the applied verified rule |
+| `available_capital` | decimal | Yes | Entrepreneur-provided margin contribution in rupees |
+| `margin_percentage` | decimal | Yes | Configured margin percentage; 10 in Phase 3 |
+| `project_cost` | decimal | Yes | `available_capital / 0.10`, calculated with decimal arithmetic |
+| `potential_financing` | decimal/null | When a rule applies | Lower of the percentage-based amount and configured maximum |
+| `scheme_id` | string/null | When a rule applies | Stable ID of the inclusive range match |
 | `scheme_name` | string | When a rule applies | Official scheme name |
+| `finance_percentage` | decimal/null | When a rule applies | Financing percentage loaded from the rule |
 | `interest_rate` | decimal | When verified/applicable | Rate from the referenced official rule |
 | `repayment_years` | decimal | When verified/applicable | Repayment period from the rule |
 | `moratorium_months` | integer | When verified/applicable | Moratorium from the rule |
-| `financial_confidence` | string | Yes | Confidence based on rule completeness and input quality |
+| `maximum_financing` | decimal/null | When a rule applies | Financing cap loaded from the rule |
+| `rule_source` | string/null | When a rule applies | Source recorded by the matched rule |
+| `rule_verified_date` | date/null | When a rule applies | Rule verification date in ISO API serialization |
+| `status` | string | Yes | `configured` or `outside_configured_range` |
+| `reason_code` | string | Yes | Stable routing outcome code |
+| `notes` | string | Yes | Plain-language routing/coverage note |
 
 These fields describe an indicative structure, not loan approval, sanction or a
 binding eligibility decision. Calculation reason codes and rule IDs should be
-added when the engine interface is implemented.
+retained for auditability. A project outside all configured inclusive ranges
+returns null scheme/rate/financing fields with reason code
+`PROJECT_COST_OUTSIDE_CONFIGURED_SCHEMES`; it does not fall back to an invented
+scheme. EMI is outside the Phase 3 contract.
 
 ## Viability output
 
@@ -224,4 +236,39 @@ AdvisoryInsights
 ```
 
 The sole illustrative analysis number is `business_potential.score = 76`. All
-population, competition and calculated financial fields remain `null`.
+population and competition fields remain `null`. From Phase 3 onward, only the
+`finance` object is deterministic; the overall response remains illustrative
+until local-market and viability engines replace their placeholders.
+
+## Phase 3 deterministic finance contract
+
+`FinanceSummary` now contains:
+
+```text
+available_capital: number
+margin_percentage: number
+project_cost: number
+potential_financing: number | null
+scheme_id: string | null
+scheme_name: string | null
+finance_percentage: number | null
+interest_rate: number | null
+repayment_years: number | null
+moratorium_months: integer | null
+maximum_financing: number | null
+rule_source: string | null
+rule_verified_date: date | null
+status: configured | outside_configured_range
+reason_code: SCHEME_MATCHED | PROJECT_COST_OUTSIDE_CONFIGURED_SCHEMES
+notes: string
+```
+
+The canonical rules file is `finance/financial_rules.csv`. All range endpoints
+are inclusive. Potential financing is:
+
+```text
+min(project_cost × finance_percentage / 100, maximum_financing)
+```
+
+Financial values are estimates. Final eligibility and loan sanction remain
+subject to the authorised financing agency and applicable scheme conditions.

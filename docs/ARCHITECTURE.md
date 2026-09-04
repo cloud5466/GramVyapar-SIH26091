@@ -1,6 +1,6 @@
 # Architecture
 
-## Implemented Phase 2C flow
+## Implemented Phase 3 flow
 
     NEXT.JS UI
     Location · Business · Available capital
@@ -8,21 +8,22 @@
     FASTAPI
     Typed validation · GET /health · POST /api/v1/analyze
                          ↓
-    ILLUSTRATIVE ANALYSIS SERVICE
-    Phase 2 placeholder response · No datasets or calculations
+    ANALYSIS SERVICE + DETERMINISTIC FINANCE ENGINE
+    financial_rules.csv · Decimal calculation · Rule routing · Financing cap
                          ↓
     GRAMVYAPAR RESULT VIEW
     Loading · Validation · Success · Service-error states
 
 The React frontend collects input, sends the typed request and renders the
 returned response. It does not calculate project cost, financing, viability or
-market indicators.
+market indicators. Project cost and potential financing are calculated only by
+the Python engine from the versioned finance rule dataset.
 
 Future backend layers remain deliberately separate:
 
 | Layer | Planned phase | Current status |
 | --- | --- | --- |
-| Finance Engine | Phase 3 | Not implemented |
+| Finance Engine | Phase 3 | Implemented |
 | Local Data Engine | Phase 4 | Not implemented |
 | Viability Engine | Phase 5 | Not implemented |
 | AI Advisory | Phase 6 | Not implemented |
@@ -135,10 +136,26 @@ The definitions and display rules are in docs/SOURCE_POLICY.md.
 
 ## Frontend integration boundary
 
-The landing website now consumes the typed Phase 2 analysis response through a
+The landing website now consumes the typed analysis response through a
 central HTTP client. React imports no engine internals and performs no business
-calculations. The UI keeps illustrative results visibly labelled and displays
-missing local-market and financial values as pending rather than zero.
+calculations. The UI keeps business-potential and local-market results visibly
+illustrative while presenting the deterministic finance result as an estimate.
+It displays explicit outside-coverage states rather than zero or invented rules.
+
+## Phase 3 finance boundary
+
+    available_capital
+           ↓ 10% configured margin
+    Decimal project-cost calculation
+           ↓ inclusive CSV range match
+    versioned financial rule
+           ↓ finance percentage + maximum cap
+    typed FinanceResult with reason code and provenance
+
+The loader resolves `finance/financial_rules.csv` from the repository location,
+not the terminal's current working directory. It validates required columns,
+types, dates, scheme-ID uniqueness and non-overlapping ranges before any rule is
+used. No EMI or amortization method is implemented.
 
 ## Auditability
 

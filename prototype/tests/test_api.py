@@ -1,4 +1,4 @@
-"""Contract tests for the Phase 2B GramVyapar prototype API."""
+"""Regression tests for the Phase 3 GramVyapar prototype API."""
 
 import unittest
 from uuid import UUID
@@ -9,7 +9,7 @@ from api.main import app
 
 
 class GramVyaparApiTests(unittest.TestCase):
-    """Validate the health endpoint and illustrative analysis contract."""
+    """Validate API plumbing while finance uses deterministic rule data."""
 
     @classmethod
     def setUpClass(cls) -> None:
@@ -51,15 +51,12 @@ class GramVyaparApiTests(unittest.TestCase):
             },
         )
         self.assertEqual(body["finance"]["available_capital"], 100000.0)
-        for field in (
-            "project_cost",
-            "potential_financing",
-            "scheme_name",
-            "interest_rate",
-            "repayment_years",
-            "moratorium_months",
-        ):
-            self.assertIsNone(body["finance"][field])
+        self.assertEqual(body["finance"]["margin_percentage"], 10.0)
+        self.assertEqual(body["finance"]["project_cost"], 1000000.0)
+        self.assertEqual(body["finance"]["potential_financing"], 900000.0)
+        self.assertEqual(body["finance"]["scheme_id"], "FIN002")
+        self.assertEqual(body["finance"]["status"], "configured")
+        self.assertEqual(body["finance"]["reason_code"], "SCHEME_MATCHED")
         self.assertEqual(body["sources"], [])
         self.assertIn("Illustrative prototype analysis", body["disclaimer"])
 
@@ -106,6 +103,17 @@ class GramVyaparApiTests(unittest.TestCase):
             json={"location_id": "demo-location-01", "business_id": "dairy"},
         )
         self.assertEqual(response.status_code, 422)
+
+    def test_out_of_range_finance_is_returned_without_invented_scheme(self) -> None:
+        response = self.post_analysis(available_capital=500000.1)
+        self.assertEqual(response.status_code, 200)
+        finance = response.json()["finance"]
+        self.assertEqual(finance["status"], "outside_configured_range")
+        self.assertEqual(
+            finance["reason_code"], "PROJECT_COST_OUTSIDE_CONFIGURED_SCHEMES"
+        )
+        self.assertIsNone(finance["scheme_id"])
+        self.assertIsNone(finance["potential_financing"])
 
     def test_health(self) -> None:
         response = self.client.get("/health")

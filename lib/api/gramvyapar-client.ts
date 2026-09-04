@@ -24,12 +24,21 @@ export interface LocalMarket {
 
 export interface FinanceSummary {
   available_capital: number;
-  project_cost: number | null;
+  margin_percentage: number;
+  project_cost: number;
   potential_financing: number | null;
+  scheme_id: string | null;
   scheme_name: string | null;
+  finance_percentage: number | null;
   interest_rate: number | null;
   repayment_years: number | null;
   moratorium_months: number | null;
+  maximum_financing: number | null;
+  rule_source: string | null;
+  rule_verified_date: string | null;
+  status: 'configured' | 'outside_configured_range';
+  reason_code: 'SCHEME_MATCHED' | 'PROJECT_COST_OUTSIDE_CONFIGURED_SCHEMES';
+  notes: string;
 }
 
 export interface AdvisoryInsights {
