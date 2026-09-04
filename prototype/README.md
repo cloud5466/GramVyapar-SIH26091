@@ -16,9 +16,21 @@ authentication or AI integration.
     services/   Reserved for later service orchestration
     tests/      Future backend tests
 
-## Windows PowerShell setup
+## Local development
 
-From any PowerShell window:
+Run the frontend and backend in two PowerShell terminals.
+
+### Terminal 1 — frontend
+
+```powershell
+Set-Location 'C:\Users\Admin\Desktop\GramVyapar-SIH26091'
+npm run dev
+```
+
+The existing frontend runtime is Vinext on Vite and starts at
+[http://localhost:3000](http://localhost:3000).
+
+### Terminal 2 — backend
 
 ```powershell
 Set-Location 'C:\Users\Admin\Desktop\GramVyapar-SIH26091\prototype'
@@ -48,9 +60,10 @@ Expected health response:
 
 ## Local CORS policy
 
-The API allows browser requests from `http://localhost:3000`, the default
-Next.js development origin. If the frontend is intentionally started on another
-port during a later integration phase, add that exact local origin to the
+The API allows browser requests from the exact local frontend origins
+`http://localhost:3000` and `http://127.0.0.1:3000`. It does not use a wildcard
+origin. If the frontend is intentionally started on another port during a later
+integration phase, add both hostname variants for that exact port to the
 development allowlist. Production CORS is not configured in Phase 2A.
 
 ## Phase boundary

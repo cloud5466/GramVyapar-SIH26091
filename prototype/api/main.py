@@ -1,11 +1,25 @@
 """Minimal FastAPI application for GramVyapar Phase 2A."""
 
+from typing import Literal
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
 
 
 SERVICE_NAME = "GramVyapar Prototype API"
-LOCAL_FRONTEND_ORIGINS = ["http://localhost:3000"]
+LOCAL_FRONTEND_ORIGINS = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+]
+
+
+class HealthResponse(BaseModel):
+    """Typed contract exposed by the Phase 2A health endpoint."""
+
+    status: Literal["ok"]
+    service: Literal["GramVyapar Prototype API"]
+    phase: Literal["2"]
 
 app = FastAPI(title=SERVICE_NAME)
 
@@ -18,12 +32,8 @@ app.add_middleware(
 )
 
 
-@app.get("/health")
-def health() -> dict[str, str]:
+@app.get("/health", response_model=HealthResponse)
+def health() -> HealthResponse:
     """Return the Phase 2A service readiness response."""
 
-    return {
-        "status": "ok",
-        "service": SERVICE_NAME,
-        "phase": "2",
-    }
+    return HealthResponse(status="ok", service=SERVICE_NAME, phase="2")
