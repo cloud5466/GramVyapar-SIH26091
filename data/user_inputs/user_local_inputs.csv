@@ -1,0 +1,2 @@
+input_id,location_id,business_category,known_competitors,local_price,monthly_rent,supplier_distance_km,existing_experience,input_source,input_date
+UIN001,LOC001,Dairy,,,,,,User-supplied (village has no indexed retail dairy data - this is the exact gap GramVyapar's local-input flow is designed to fill),

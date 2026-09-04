@@ -1,5 +1,32 @@
 # Architecture
 
+## Implemented Phase 2C flow
+
+    NEXT.JS UI
+    Location · Business · Available capital
+                         ↓ HTTP REST API
+    FASTAPI
+    Typed validation · GET /health · POST /api/v1/analyze
+                         ↓
+    ILLUSTRATIVE ANALYSIS SERVICE
+    Phase 2 placeholder response · No datasets or calculations
+                         ↓
+    GRAMVYAPAR RESULT VIEW
+    Loading · Validation · Success · Service-error states
+
+The React frontend collects input, sends the typed request and renders the
+returned response. It does not calculate project cost, financing, viability or
+market indicators.
+
+Future backend layers remain deliberately separate:
+
+| Layer | Planned phase | Current status |
+| --- | --- | --- |
+| Finance Engine | Phase 3 | Not implemented |
+| Local Data Engine | Phase 4 | Not implemented |
+| Viability Engine | Phase 5 | Not implemented |
+| AI Advisory | Phase 6 | Not implemented |
+
 ## System flow
 
     USER
@@ -108,10 +135,10 @@ The definitions and display rules are in docs/SOURCE_POLICY.md.
 
 ## Frontend integration boundary
 
-The current landing website remains independent from deep backend
-implementation. A later integration should consume one versioned result object
-rather than importing engine internals into React components. The UI must keep
-illustrative demo state separate from real engine responses.
+The landing website now consumes the typed Phase 2 analysis response through a
+central HTTP client. React imports no engine internals and performs no business
+calculations. The UI keeps illustrative results visibly labelled and displays
+missing local-market and financial values as pending rather than zero.
 
 ## Auditability
 

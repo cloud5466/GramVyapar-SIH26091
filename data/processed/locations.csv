@@ -1,1 +1,3 @@
 location_id,location_name,block,district,state,latitude,longitude,location_type,population_estimate,population_year,population_source,population_confidence
+LOC001,Hiware Bazar,Nagar,Ahmednagar (Ahilyanagar),Maharashtra,19.06861,74.60111,Rural,1250,2012,"Wikipedia / India Water Portal (cites 2012 village survey; village widely documented as Maharashtra's 'model village')",Medium
+LOC002,Sangamner,Sangamner,Ahmednagar (Ahilyanagar),Maharashtra,19.572333,74.208961,Semi-Urban,65804,2011,"Census of India 2011 (via Wikipedia infobox)",High

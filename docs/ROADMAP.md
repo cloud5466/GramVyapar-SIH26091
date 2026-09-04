@@ -10,10 +10,17 @@ is unresolved.
 
 ## PHASE 2 — Prototype V0
 
-Create the smallest end-to-end local workflow using approved demo data and
-explicitly versioned interfaces.
+Create the smallest end-to-end local workflow with explicitly versioned
+interfaces and no dependency on datasets or real engine calculations.
 
-**Exit:** one golden case runs locally without AI or fabricated engine behavior.
+- **Phase 2A — complete:** runnable FastAPI service, `GET /health` and Swagger.
+- **Phase 2B — complete:** typed analysis request/response contract, illustrative
+  service and backend validation tests.
+- **Phase 2C — complete:** existing Next.js form connected to FastAPI with
+  loading, validation, success and service-error states.
+
+**Exit:** one illustrative golden case runs end to end locally without AI,
+datasets or fabricated engine calculations.
 
 ## PHASE 3 — Financial Engine
 
@@ -42,9 +49,10 @@ Add constrained explanation using calculated values and sourced evidence only.
 **Exit:** output schema, grounding checks, prohibited behaviors and fallback
 responses pass review.
 
-## PHASE 7 — Frontend Integration
+## PHASE 7 — Production Result Integration
 
-Connect the working GramVyapar interface to the versioned prototype result.
+Replace illustrative fields with the versioned outputs of the reviewed Phase
+3–6 engines while preserving the established frontend/API boundary.
 
 **Exit:** UI handles loading, success, unsupported and failure states without
 mixing real and illustrative data.

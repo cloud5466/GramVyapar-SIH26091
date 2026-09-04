@@ -160,3 +160,68 @@ handoff must preserve:
 - Missing evidence: omit or limit the affected output and lower confidence.
 - Invalid input: reject with a field-specific, user-safe error.
 - Conflicting evidence: retain both sources for review; do not silently choose.
+
+## Phase 2B API contract
+
+Phase 2B values are illustrative placeholders used only to validate application
+plumbing. This contract does not represent evidence-backed analysis, financial
+eligibility, loan sanction or real viability scoring.
+
+### Request: `AnalysisRequest`
+
+| Field | API type | Validation |
+| --- | --- | --- |
+| `location_id` | string | Required; trimmed value must contain at least one character |
+| `business_id` | string | Required; trimmed value must contain at least one character |
+| `available_capital` | number | Required; must be strictly greater than zero |
+
+### Response: `AnalysisResponse`
+
+| Field | API type | Phase 2B meaning |
+| --- | --- | --- |
+| `analysis_id` | string | Newly generated UUID for the illustrative response |
+| `mode` | string | Always `illustrative` in Phase 2B |
+| `business` | `BusinessContext` | Submitted IDs plus safe temporary display labels |
+| `business_potential` | `BusinessPotential` | Illustrative score and rating only |
+| `local_market` | `LocalMarket` | Reserved nullable evidence fields |
+| `finance` | `FinanceSummary` | Submitted capital plus reserved nullable calculation fields |
+| `insights` | `AdvisoryInsights` | Fixed non-AI guidance for plumbing validation |
+| `sources` | list | Empty until evidence integration |
+| `disclaimer` | string | Explicit Phase 2 illustrative-use notice |
+
+Nested response objects:
+
+```text
+BusinessContext
+  business_id: string
+  business_name: string
+  location_id: string
+  location_name: string
+
+BusinessPotential
+  score: number
+  rating: string
+
+LocalMarket
+  population_estimate: integer | null
+  mapped_competitors: integer | null
+  confidence: string
+
+FinanceSummary
+  available_capital: number
+  project_cost: number | null
+  potential_financing: number | null
+  scheme_name: string | null
+  interest_rate: number | null
+  repayment_years: number | null
+  moratorium_months: integer | null
+
+AdvisoryInsights
+  summary: string
+  opportunities: list[string]
+  risks: list[string]
+  next_steps: list[string]
+```
+
+The sole illustrative analysis number is `business_potential.score = 76`. All
+population, competition and calculated financial fields remain `null`.
