@@ -48,6 +48,24 @@ supersede them explicitly.
   `docs/DATA_CONTRACT.md`
 - **Supersedes:** The Phase 2 illustrative business-potential placeholder.
 
+## Accepted Phase 6 decision
+
+- **Decision ID:** GV-AI-001
+- **Date:** 2026-09-04
+- **Owner:** Product / Technical Lead
+- **Status:** Accepted
+- **Decision:** AI is an optional, schema-constrained explanation layer that
+  receives only a normalized evidence pack after all deterministic engines run.
+- **Rationale:** Advisory wording can improve accessibility without giving a
+  model authority over evidence, scoring or financial values. A deterministic
+  fallback preserves demo reliability and the complete analysis contract.
+- **Alternatives considered:** Free-form model output; embedding model calls in
+  the API route; making AI availability a prerequisite for analysis.
+- **Affected contracts/files:** `prototype/ai/`,
+  `prototype/engines/advisory_engine.py`, `prototype/models/schemas.py`,
+  `docs/AI_ADVISORY.md`
+- **Supersedes:** Static Phase 2 advisory text as the primary advisory output.
+
 ## New decision template
 
 - **Decision ID:**

@@ -2,19 +2,21 @@
 
 Owner: **Member 1 — Product / Technical Lead**
 
-Phase 5 combines canonical local evidence, deterministic finance and the
-versioned explainable GramVyapar Business Potential Score.
+Phase 6 combines canonical local evidence, deterministic finance, the
+versioned explainable GramVyapar Business Potential Score and an optional
+grounded advisory layer.
 `POST /api/v1/analyze` returns four bounded score components with reasons, evidence,
-confidence, completeness and limitations. External services, authentication and
-AI remain unimplemented.
+confidence, completeness and limitations. The advisory remains fully usable
+through deterministic fallback when AI is disabled or unavailable.
 
 ## Current structure
 
     api/        Health, location and typed analysis HTTP routes
-    engines/    Deterministic local-data, finance and viability engines
+    ai/         Versioned prompt and optional provider adapter
+    engines/    Deterministic engines plus grounded advisory orchestration
     loaders/    Validated data, finance-rule and viability-rule loaders
     models/     Typed API, evidence, rule, finance and scoring contracts
-    services/   Deterministic result assembly; static non-AI advisory text
+    services/   Deterministic result assembly followed by optional advisory
     tests/      API, data, finance, scoring, boundary and sensitivity tests
 
 ## Local development
@@ -73,7 +75,7 @@ Expected health response:
 }
 ```
 
-## Test the Phase 3 API
+## Test the Phase 6 API
 
 Open [http://localhost:8000/docs](http://localhost:8000/docs), expand
 `POST /api/v1/analyze`, choose **Try it out**, enter the request body and choose
@@ -83,8 +85,8 @@ PowerShell example:
 
 ```powershell
 $body = @{
-    location_id = 'demo-location-01'
-    business_id = 'dairy'
+    location_id = 'LOC002'
+    business_id = 'kirana'
     available_capital = 100000
 } | ConvertTo-Json
 
@@ -142,9 +144,28 @@ The score is a prototype decision-support heuristic, not a prediction of
 success, credit score, profitability claim, eligibility result or loan
 approval. The exact method is documented in `docs/VIABILITY_METHODOLOGY.md`.
 
-The advisory engine remains unimplemented. No model call, generated SWOT or
-free-form AI recommendation is included in Phase 5, and the frontend performs no
-business calculations.
+## Phase 6 advisory
+
+AI is disabled by default. The API returns the complete deterministic analysis
+and an evidence-based fallback advisory without a key. To test the optional
+OpenAI provider locally, set the following in the backend process before
+starting Uvicorn:
+
+```powershell
+$env:GRAMVYAPAR_AI_ENABLED = 'true'
+$env:GRAMVYAPAR_LLM_PROVIDER = 'openai'
+$env:GRAMVYAPAR_LLM_MODEL = 'gpt-5.4-mini'
+$env:GRAMVYAPAR_AI_TIMEOUT_SECONDS = '12'
+$env:OPENAI_API_KEY = '<your-local-key>'
+```
+
+Never commit a real API key. If the key is missing, a request times out, the
+provider fails, or the response does not match the advisory schema, the route
+still returns HTTP 200 with `ai_status` identifying the fallback state. Tests
+use a deterministic fake provider and do not call external services.
+
+The frontend performs no business calculations. Full grounding rules and
+limitations are in `docs/AI_ADVISORY.md`.
 
 Future implementation must continue to follow `docs/ARCHITECTURE.md`,
 `docs/DATA_CONTRACT.md` and `docs/SOURCE_POLICY.md`.

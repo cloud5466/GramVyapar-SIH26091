@@ -56,28 +56,91 @@ use `team/HANDOFF_TEMPLATE.md`.
 
 ## Current status
 
-- The GramVyapar Next.js landing website is working.
-- The public prototype experience is illustrative and frontend-only.
-- Phase 1 repository architecture and team workspaces are initialized.
-- Data CSVs and financial rule CSVs contain headers only.
-- Python engine files are responsibility placeholders; no business logic exists.
-- Demo locations remain TBD and must be limited to exactly two for the MVP.
+- The Next.js website and FastAPI prototype work together locally and are
+  prepared for a single Vercel project.
+- Deterministic local-data, finance and explainable Business Potential engines
+  are implemented with provenance, confidence and tests.
+- The grounded OpenAI advisory adapter is implemented with schema validation
+  and deterministic fallback.
+- English/Hindi UI — implemented.
+- Multilingual English/Hindi AI advisory and fallback — implemented.
+- Voice and additional Indian languages — future scope.
 
-## Run the website locally
+## Local development
 
 Requirements: Node.js 22.13 or newer.
 
-```bash
+Install and start the frontend from the repository root:
+
+```powershell
 npm install
 npm run dev
 ```
 
+In a second PowerShell window, start the authoritative FastAPI application:
+
+```powershell
+cd prototype
+.\.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+python -m uvicorn api.main:app --reload --port 8000
+```
+
+For local frontend-to-backend requests, create a private `.env.local` from
+`.env.example` or set:
+
+```text
+NEXT_PUBLIC_GRAMVYAPAR_API_URL=http://localhost:8000
+```
+
+The frontend is available at `http://localhost:3000`; backend health is at
+`http://localhost:8000/health` and API documentation is at
+`http://localhost:8000/docs`.
+
 For validation:
 
-```bash
+```powershell
 npm run lint
 npm run build
+cd prototype
+.\.venv\Scripts\python.exe -m pytest tests -q
 ```
+
+Backend setup and runtime commands are documented in `prototype/README.md`.
+Multilingual behavior is documented in `docs/MULTILINGUAL.md`; AI configuration
+and grounding rules are documented in `docs/AI_ADVISORY.md`.
+
+## Vercel deployment
+
+GramVyapar deploys as one Vercel project: native Next.js serves `/`, while
+`api/index.py` exposes the existing FastAPI application under `/api/*`.
+Production browser requests use same-origin API paths automatically.
+
+1. Commit and push this repository to GitHub.
+2. In Vercel, import the GitHub repository.
+3. Select **Next.js** as the framework preset.
+4. Keep **Root Directory** set to the repository root (`./`).
+5. Keep the default install and build commands (`npm install`, `npm run build`).
+6. Add these server-side environment variables in the Vercel dashboard:
+
+   ```text
+   GRAMVYAPAR_AI_ENABLED=true
+   GRAMVYAPAR_LLM_PROVIDER=openai
+   GRAMVYAPAR_LLM_MODEL=gpt-5.4-mini
+   GRAMVYAPAR_AI_TIMEOUT_SECONDS=12
+   OPENAI_API_KEY=<configured only in Vercel>
+   ```
+
+7. Do **not** set `NEXT_PUBLIC_GRAMVYAPAR_API_URL` in Vercel unless the API is
+   intentionally moved to an external host. When absent, the browser calls the
+   deployed domain's `/api` routes.
+8. Deploy, then confirm `https://<your-domain>/api/health` returns `status: ok`.
+9. Run one English and one Hindi business analysis through the deployed UI.
+
+The root `requirements.txt` is the Vercel Python runtime dependency manifest.
+`vercel.json` only guarantees that the canonical `data/`, `finance/` and
+`config/` files are included with the Python function; framework detection and
+frontend routing remain native.
 
 ## Development roadmap
 

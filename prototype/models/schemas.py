@@ -4,7 +4,7 @@ from datetime import date
 from decimal import Decimal
 from typing import Annotated, Literal
 
-from pydantic import BaseModel, Field, StringConstraints
+from pydantic import BaseModel, Field, StringConstraints, field_validator
 
 
 NonEmptyId = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1)]
@@ -17,6 +17,7 @@ class AnalysisRequest(BaseModel):
     location_id: NonEmptyId
     business_id: NonEmptyId
     available_capital: PositiveCapital
+    language: Literal["en", "hi"] = "en"
 
 
 class BusinessContext(BaseModel):
@@ -280,8 +281,127 @@ class FinanceSummary(BaseModel):
     notes: str
 
 
+AdvisoryText = Annotated[
+    str, StringConstraints(strip_whitespace=True, min_length=1, max_length=700)
+]
+AdvisoryItem = Annotated[
+    str, StringConstraints(strip_whitespace=True, min_length=1, max_length=300)
+]
+
+
+class EvidenceUserInput(BaseModel):
+    """User-supplied request values and any configured local observations."""
+
+    location_id: str
+    location_name: str
+    business_id: str
+    business_name: str
+    available_capital: float
+    known_competitors: int | None
+    local_price: float | None
+    monthly_rent: float | None
+    supplier_distance_km: float | None
+    existing_experience: str | None
+
+
+class EvidenceLocalMarket(BaseModel):
+    """Normalized market evidence safe to share with an advisory provider."""
+
+    population_estimate: int | None
+    population_year: int | None
+    population_source: str | None
+    population_confidence: str | None
+    mapped_competitors: int
+    competitor_radius_km: float | None
+    competitor_names: list[str]
+    evidence_status: Literal["complete", "partial", "limited"]
+    warnings: list[str]
+
+
+class EvidenceBusinessProfile(BaseModel):
+    """Configured qualitative profile used only as advisory evidence."""
+
+    customer_type: str
+    supplier_dependency: str
+    seasonality: str
+    main_operational_risks: list[str]
+    key_demand_indicators: list[str]
+
+
+class EvidenceFinance(BaseModel):
+    """Read-only projection of the deterministic financial result."""
+
+    available_capital: float
+    margin_percentage: float
+    project_cost: float
+    potential_financing: float | None
+    scheme_id: str | None
+    scheme_name: str | None
+    finance_percentage: float | None
+    interest_rate: float | None
+    repayment_years: float | None
+    moratorium_months: int | None
+    maximum_financing: float | None
+    cap_applied: bool
+    status: Literal["configured", "outside_configured_range"]
+    reason_code: Literal[
+        "SCHEME_MATCHED", "PROJECT_COST_OUTSIDE_CONFIGURED_SCHEMES"
+    ]
+    notes: str
+
+
+class EvidencePack(BaseModel):
+    """Versioned, normalized and explicitly bounded advisory input."""
+
+    evidence_pack_version: Literal["evidence-pack-v1"] = "evidence-pack-v1"
+    response_language: Literal["English", "Hindi"]
+    user_input: EvidenceUserInput
+    local_market: EvidenceLocalMarket
+    business_profile: EvidenceBusinessProfile
+    finance: EvidenceFinance
+    business_potential: BusinessPotential
+
+
+class AdvisorySwot(BaseModel):
+    """Concise SWOT interpretation grounded in the evidence pack."""
+
+    strengths: list[AdvisoryItem] = Field(max_length=3)
+    weaknesses: list[AdvisoryItem] = Field(max_length=3)
+    opportunities: list[AdvisoryItem] = Field(max_length=3)
+    threats: list[AdvisoryItem] = Field(max_length=3)
+
+
+class AdvisoryDraft(BaseModel):
+    """Content an advisory provider may generate; no calculated fields exist here."""
+
+    summary: AdvisoryText
+    why_this_score: list[AdvisoryItem] = Field(max_length=4)
+    opportunities: list[AdvisoryItem] = Field(max_length=4)
+    risks: list[AdvisoryItem] = Field(max_length=4)
+    swot: AdvisorySwot
+    next_steps: list[AdvisoryItem] = Field(min_length=3, max_length=3)
+    questions_to_verify: list[AdvisoryItem] = Field(max_length=4)
+    confidence_note: AdvisoryText
+    disclaimer: AdvisoryText
+
+    @field_validator("summary")
+    @classmethod
+    def keep_summary_concise(cls, value: str) -> str:
+        sentence_count = sum(value.count(mark) for mark in ".!?।")
+        if sentence_count > 3:
+            raise ValueError("summary must contain at most three sentences")
+        return value
+
+
+class AdvisoryResult(AdvisoryDraft):
+    """Validated advisory content plus application-controlled provenance."""
+
+    prompt_version: Literal["advisory-prompt-v1"]
+    ai_status: Literal["generated", "fallback", "disabled", "error"]
+
+
 class AdvisoryInsights(BaseModel):
-    """Static Phase 2B guidance used to validate response plumbing."""
+    """Deprecated compatibility view derived from the authoritative advisory."""
 
     summary: str
     opportunities: list[str]
@@ -298,6 +418,7 @@ class AnalysisResponse(BaseModel):
     business_potential: BusinessPotential
     local_market: LocalMarket
     finance: FinanceSummary
+    advisory: AdvisoryResult
     insights: AdvisoryInsights
     sources: list[EvidenceSource]
     disclaimer: str

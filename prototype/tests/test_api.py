@@ -155,6 +155,11 @@ class GramVyaparApiTests(unittest.TestCase):
     def test_health(self) -> None:
         response = self.client.get("/health")
         self.assertEqual(response.status_code, 200)
+
+    def test_production_health(self) -> None:
+        response = self.client.get("/api/health")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["status"], "ok")
         self.assertEqual(
             response.json(),
             {

@@ -2,6 +2,11 @@
 @import 'tw-animate-css';
 @import 'shadcn/tailwind.css';
 
+html[lang='hi'] body {
+  font-family: 'Nirmala UI', 'Noto Sans Devanagari', Mangal, var(--font-geist-sans), sans-serif;
+  line-height: 1.55;
+}
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {

@@ -1,15 +1,17 @@
 # Architecture
 
-## Implemented Phase 5 flow
+## Implemented Phase 6 flow
 
     NEXT.JS UI
-    Location · Business · Available capital
+    English/Hindi selection · Location · Business · Available capital
                          ↓ HTTP REST API
     FASTAPI
     Typed validation · GET /health · GET /api/v1/locations · POST /api/v1/analyze
                          ↓
     LOCAL DATA + FINANCE + VIABILITY ENGINES
     Canonical evidence · Financial rules · Versioned scoring rules
+                         ↓ typed EvidencePack + requested response language
+    OPTIONAL GROUNDED ADVISORY + BILINGUAL VALIDATED FALLBACK
                          ↓
     GRAMVYAPAR RESULT VIEW
     Loading · Validation · Success · Service-error states
@@ -20,6 +22,11 @@ cost, financing, viability or market indicators. Local evidence, finance and
 potential scoring are selected/calculated only by their Python engines from
 versioned data and rules.
 
+The global frontend language provider sends `AnalysisRequest.language` as `en`
+or `hi`. Deterministic engines run identically in both languages. Only after
+their work finishes does `EvidencePack.response_language` instruct the advisory
+layer to return English or Hindi display values.
+
 Future backend layers remain deliberately separate:
 
 | Layer | Planned phase | Current status |
@@ -27,12 +34,12 @@ Future backend layers remain deliberately separate:
 | Finance Engine | Phase 3 | Implemented |
 | Local Data Engine | Phase 4 | Implemented |
 | Viability Engine | Phase 5 | Implemented |
-| AI Advisory | Phase 6 | Not implemented |
+| AI Advisory | Phase 6 | Implemented with graceful fallback |
 
 ## System flow
 
     USER
-    Location · Business · Capital
+    Language · Location · Business · Capital
                          ↓
     DATA & EVIDENCE LAYER
     Population · Mapped Competitors · MSME Context
@@ -99,6 +106,11 @@ or sanction a loan.
 Explains supplied evidence and calculated outputs in accessible language. It may
 structure opportunities, risks, SWOT and next steps. It may not recalculate
 critical values, invent missing evidence or state unsupported eligibility.
+Phase 6 sends a versioned normalized `EvidencePack` through a provider
+abstraction, validates the structured result and falls back to deterministic
+evidence-based guidance when AI is disabled or unavailable. Provider output has
+no schema fields capable of changing calculated values. See
+`docs/AI_ADVISORY.md`.
 
 ### Presentation layer
 

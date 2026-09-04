@@ -54,16 +54,19 @@ API/local-data/finance regressions and frontend lint/build pass.
 
 ## PHASE 6 — AI Advisory Layer
 
-Add constrained explanation using calculated values and sourced evidence only.
+**Implemented:** versioned `EvidencePack`, constrained structured prompt,
+provider abstraction, typed advisory result, prompt-injection boundary,
+deterministic fallback and frontend progressive disclosure.
 
-**Exit:** output schema, grounding checks, prohibited behaviors and fallback
-responses pass review.
+**Validation complete:** generated, disabled, missing-key, timeout, provider
+failure and malformed-output paths are covered without modifying deterministic
+results. Manual real-provider validation remains optional and requires a local
+API key.
 
 ## PHASE 7 — Production Result Integration
 
-Replace the remaining illustrative/static advisory fields with the reviewed
-Phase 6 output while preserving the established frontend/API boundary and the
-deterministic Phase 3–5 results.
+Harden the reviewed Phase 6 output for deployment while preserving the
+established frontend/API boundary and deterministic Phase 3–5 results.
 
 **Exit:** UI handles loading, success, unsupported and failure states without
 mixing real and illustrative data.

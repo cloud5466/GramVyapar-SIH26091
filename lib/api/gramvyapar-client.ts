@@ -2,6 +2,7 @@ export interface AnalysisRequest {
   location_id: string;
   business_id: string;
   available_capital: number;
+  language?: 'en' | 'hi';
 }
 
 export interface BusinessContext {
@@ -121,6 +122,27 @@ export interface AdvisoryInsights {
   next_steps: string[];
 }
 
+export interface AdvisorySwot {
+  strengths: string[];
+  weaknesses: string[];
+  opportunities: string[];
+  threats: string[];
+}
+
+export interface AdvisoryResult {
+  summary: string;
+  why_this_score: string[];
+  opportunities: string[];
+  risks: string[];
+  swot: AdvisorySwot;
+  next_steps: string[];
+  questions_to_verify: string[];
+  confidence_note: string;
+  disclaimer: string;
+  prompt_version: 'advisory-prompt-v1';
+  ai_status: 'generated' | 'fallback' | 'disabled' | 'error';
+}
+
 export interface AnalysisResponse {
   analysis_id: string;
   mode: string;
@@ -128,13 +150,16 @@ export interface AnalysisResponse {
   business_potential: BusinessPotential;
   local_market: LocalMarket;
   finance: FinanceSummary;
+  advisory: AdvisoryResult;
+  /** Deprecated compatibility mirror. New UI should use advisory. */
   insights: AdvisoryInsights;
   sources: EvidenceSource[];
   disclaimer: string;
 }
 
 const configuredApiUrl = process.env.NEXT_PUBLIC_GRAMVYAPAR_API_URL?.trim();
-const API_BASE_URL = (configuredApiUrl || 'http://localhost:8000').replace(/\/+$/, '');
+// An empty base URL deliberately uses the current origin in production.
+const API_BASE_URL = configuredApiUrl ? configuredApiUrl.replace(/\/+$/, '') : '';
 
 async function getErrorMessage(response: Response) {
   try {

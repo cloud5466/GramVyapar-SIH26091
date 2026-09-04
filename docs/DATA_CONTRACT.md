@@ -138,10 +138,16 @@ bounded and accompanied by boundary and sensitivity tests.
 | Field | Logical type | Required | Meaning |
 | --- | --- | --- | --- |
 | `summary` | string | Yes | Plain-language explanation of supplied evidence and outputs |
+| `why_this_score` | list of strings | Yes | Up to four explanations tied to deterministic components |
 | `opportunities` | list of strings | Yes | Evidence-grounded positive conditions |
 | `risks` | list of strings | Yes | Evidence-grounded risks and uncertainties |
 | `swot` | object | Yes | Strengths, weaknesses, opportunities and threats |
-| `next_steps` | ordered list of strings | Yes | Practical validation or preparation actions |
+| `next_steps` | ordered list of strings | Yes | Exactly three practical validation or preparation actions |
+| `questions_to_verify` | list of strings | Yes | Up to four questions that surface missing evidence |
+| `confidence_note` | string | Yes | Plain-language evidence-confidence limitation |
+| `disclaimer` | string | Yes | Non-guarantee and verification warning |
+| `prompt_version` | string | Yes | Application-controlled prompt contract version |
+| `ai_status` | string | Yes | `generated`, `fallback`, `disabled` or `error` |
 
 The advisory layer may explain or organize supplied evidence. It must not invent
 sources, change calculated values, decide financial eligibility or hide missing
@@ -180,6 +186,7 @@ eligibility, loan sanction or real viability scoring.
 | `location_id` | string | Required; trimmed value must contain at least one character |
 | `business_id` | string | Required; trimmed value must contain at least one character |
 | `available_capital` | number | Required; must be strictly greater than zero |
+| `language` | `en` or `hi` | Optional; defaults to `en` for backward compatibility |
 
 ### Response: `AnalysisResponse`
 
@@ -369,3 +376,41 @@ success, credit score, profitability forecast, loan-eligibility score or loan
 approval. Exact formulas and thresholds are defined in
 `docs/VIABILITY_METHODOLOGY.md`; machine-readable rules are in
 `config/viability_rules.json`.
+
+## Phase 6 grounded advisory contract
+
+After the deterministic engines finish, the service creates a versioned
+`EvidencePack` containing normalized request, local-market, business-profile,
+finance and Business Potential results. `response_language` is `English` or
+`Hindi` and affects advisory display text only. Raw dataset paths, debug state,
+environment values and secrets are excluded.
+
+`AnalysisResponse.advisory` contains:
+
+```text
+summary: string
+why_this_score: list[string] (maximum 4)
+opportunities: list[string] (maximum 4)
+risks: list[string] (maximum 4)
+swot:
+  strengths: list[string] (maximum 3)
+  weaknesses: list[string] (maximum 3)
+  opportunities: list[string] (maximum 3)
+  threats: list[string] (maximum 3)
+next_steps: list[string] (exactly 3)
+questions_to_verify: list[string] (maximum 4)
+confidence_note: string
+disclaimer: string
+prompt_version: advisory-prompt-v1
+ai_status: generated | fallback | disabled | error
+```
+
+Provider output cannot carry or overwrite deterministic numerical fields.
+`insights` remains temporarily available as a deprecated compatibility mirror
+of advisory summary, opportunities, risks and next steps. New consumers must use
+`advisory`.
+
+AI-disabled, missing-key, timeout, provider-error and malformed-output states
+return a complete deterministic fallback advisory and do not fail an otherwise
+valid analysis request. Details and configuration are documented in
+`docs/AI_ADVISORY.md`.
